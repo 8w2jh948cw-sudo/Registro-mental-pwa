@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f4f4f6">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Registro">
+  <title>Registro</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="app">
+    <header>
+      <div><p id="dateLabel">Hoje</p><h1>Registro</h1></div>
+      <button class="icon" id="optionsBtn" aria-label="Opções">•••</button>
+    </header>
+
+    <section class="summary">
+      <small>Resumo do dia</small>
+      <strong id="summaryMain">—</strong>
+      <span id="summarySub">Carregando…</span>
+    </section>
+
+    <section class="actions">
+      <button class="action note" data-type="note"><b>✎</b><strong>+ Anotação</strong><small>Texto ou voz</small></button>
+      <button class="action med" data-type="medication"><b>✚</b><strong>+ Medicamento</strong><small>Administração</small></button>
+      <button class="action buy" data-type="purchase"><b>⌑</b><strong>+ Compra</strong><small>Preço e local</small></button>
+    </section>
+
+    <section>
+      <div class="section-head"><h2>Linha do tempo</h2><button id="todayBtn">Hoje</button></div>
+      <div id="timeline" class="timeline"></div>
+      <div id="empty" class="empty hidden">Nenhum registro neste dia.</div>
+    </section>
+
+    <p class="dev-note">Os registros iniciais são fictícios e servem apenas como referência de desenvolvimento.</p>
+  </main>
+
+  <div id="backdrop" class="backdrop" aria-hidden="true">
+    <section class="sheet">
+      <div class="grab"></div>
+      <div class="sheet-head"><h2 id="sheetTitle">Novo registro</h2><button class="icon" id="closeBtn">×</button></div>
+      <form id="form"></form>
+    </section>
+  </div>
+
+  <div id="toast" class="toast"></div>
+  <script src="./app.js"></script>
+</body>
+</html>
