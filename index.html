@@ -26,10 +26,18 @@
     <section class="actions">
       <button class="action note" data-type="note"><b>✎</b><strong>+ Anotação</strong><small>Texto ou voz</small></button>
       <button class="action med" data-type="medication"><b>✚</b><strong>+ Medicamento</strong><small>Administração</small></button>
-      <button class="action buy" data-type="purchase"><b>⌑</b><strong>+ Compra</strong><small>Preço e local</small></button>
+      <button class="action buy" data-type="purchase">
+        <b class="purchase-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 8h12l-1 12H7L6 8Z"></path>
+            <path d="M9 8V6a3 3 0 0 1 6 0v2"></path>
+          </svg>
+        </b>
+        <strong>+ Compra</strong><small>Preço e local</small>
+      </button>
     </section>
 
-    <section>
+    <section class="timeline-zone">
       <div class="section-head"><h2>Linha do tempo</h2><button id="todayBtn">Hoje</button></div>
       <div id="timeline" class="timeline"></div>
       <div id="empty" class="empty hidden">Nenhum registro neste dia.</div>
