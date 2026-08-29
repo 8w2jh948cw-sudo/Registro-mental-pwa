@@ -1,0 +1,52 @@
+REGISTRO — V1 DE DESENVOLVIMENTO
+
+Objetivo
+-------
+Web app iPhone-first para registrar, de forma independente:
+
+1. Anotações pessoais (texto e/ou gravação de voz)
+2. Administrações de medicamentos/substâncias
+3. Compras de medicamentos
+
+Todos os registros recebem data e horário e formam uma linha do tempo comum.
+
+IMPORTANTE
+----------
+Esta versão NÃO faz diagnóstico, recomendação médica ou inferência causal.
+A futura área de análises deverá apenas apontar padrões matemáticos e associações temporais presentes nos registros do próprio usuário.
+
+Dados fictícios iniciais
+------------------------
+- “Estou mais tranquilo agora.”
+- Paroxetina 20 mg
+- “Estava bastante ansioso durante a tarde.”
+- Bupropiona 150 mg
+
+Esses registros existem apenas como referência visual e de desenvolvimento.
+
+Funcionalidades desta V1
+------------------------
+- Interface iPhone-first
+- Resumo do dia
+- Registro independente de anotação
+- Registro independente de administração
+- Registro independente de compra
+- Data e horário automáticos, porém editáveis antes de salvar
+- Gravação de voz local quando suportada pelo navegador
+- Linha do tempo cronológica
+- Exclusão de registros
+- Persistência local em IndexedDB
+- PWA básica/offline
+- Tema claro/escuro conforme o sistema
+
+Ainda não implementado
+----------------------
+- Transcrição automática
+- Edição completa de registros salvos
+- Cadastro estruturado de medicamentos
+- Estoque
+- Análises/correlações
+- Tempo de ação e duração de efeitos
+- Exportação/backup
+- Sincronização
+- Relatório para médico
