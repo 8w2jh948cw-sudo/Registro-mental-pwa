@@ -1,0 +1,468 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Protótipo visual da escala emocional</title>
+<style>
+  :root {
+    --text: #12131A;
+    --muted: #6C6F83;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", system-ui, sans-serif;
+    color: var(--text);
+    background:
+      radial-gradient(circle at 10% 8%, rgba(255,124,183,.10), transparent 28%),
+      radial-gradient(circle at 88% 12%, rgba(70,160,255,.13), transparent 33%),
+      radial-gradient(circle at 60% 85%, rgba(113,88,255,.09), transparent 34%),
+      linear-gradient(180deg, #FCFCFF 0%, #F4F7FE 100%);
+    padding: 18px 16px 24px;
+  }
+  .wrap { max-width: 420px; margin: 0 auto; }
+  .topnote {
+    margin-bottom: 14px;
+    padding: 12px 14px;
+    border-radius: 18px;
+    background: rgba(255,255,255,.52);
+    backdrop-filter: blur(18px) saturate(145%);
+    border: 1px solid rgba(255,255,255,.72);
+    box-shadow: 0 10px 28px rgba(40,45,84,.08);
+    color: #3D4260;
+    font-size: 13.5px;
+    line-height: 1.38;
+  }
+  .topnote strong { color: #181B2C; }
+  .card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 28px;
+    padding: 18px;
+    background: linear-gradient(145deg, rgba(255,255,255,.86), rgba(248,249,255,.64));
+    border: 1px solid rgba(255,255,255,.82);
+    backdrop-filter: blur(20px) saturate(145%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.95), 0 18px 38px rgba(48,54,93,.10);
+    margin-bottom: 16px;
+  }
+  .card::before {
+    content: "";
+    position: absolute;
+    inset: -40px auto auto -20px;
+    width: 160px;
+    height: 120px;
+    background: radial-gradient(circle, rgba(86,200,255,.13), transparent 72%);
+    filter: blur(18px);
+    pointer-events: none;
+  }
+  .row { display: flex; gap: 12px; align-items: center; justify-content: space-between; }
+  .eyebrow {
+    color: #747A94;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: .01em;
+    margin-bottom: 5px;
+  }
+  h1 {
+    margin: 0;
+    font-size: 20px;
+    line-height: 1.08;
+    font-weight: 850;
+    letter-spacing: -.03em;
+  }
+  .sub { margin-top: 4px; color: var(--muted); font-size: 13.5px; line-height: 1.35; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    min-height: 36px; padding: 0 14px; border-radius: 999px;
+    background: rgba(86,200,255,.12); color: #124964;
+    border: 1px solid rgba(130,216,255,.45);
+    box-shadow: 0 0 18px rgba(86,200,255,.12);
+    font-weight: 700; font-size: 13px;
+  }
+  .spark {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #56C8FF; box-shadow: 0 0 10px rgba(86,200,255,.85);
+  }
+  .section-title { margin: 4px 0 12px; font-size: 15px; font-weight: 800; letter-spacing: -.015em; }
+  .mood-scale { display: grid; grid-template-columns: repeat(11, 1fr); gap: 8px; }
+  .mood-score {
+    position: relative;
+    height: 48px;
+    border-radius: 15px;
+    border: 1.5px solid var(--border);
+    color: var(--textColor);
+    background: linear-gradient(145deg, var(--hi), var(--bgColor) 62%, var(--lo));
+    box-shadow: inset 0 1px 1px rgba(255,255,255,.30), inset 0 -2px 6px rgba(0,0,0,.06), 0 0 9px var(--glow);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px; font-weight: 850; letter-spacing: -.03em;
+    cursor: pointer; user-select: none;
+    transition: transform .28s cubic-bezier(.2,.9,.2,1), box-shadow .28s ease, border-color .28s ease, filter .28s ease;
+    isolation: isolate;
+  }
+  .mood-score::after {
+    content: "";
+    position: absolute; inset: 1px;
+    border-radius: 13px;
+    background: linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.02));
+    pointer-events: none; opacity: .85;
+  }
+  .mood-score.zero { background: radial-gradient(circle at 36% 24%, #34313F 0%, #1D1B24 42%, #111116 100%); }
+  .mood-score.selected {
+    transform: scale(1.16) translateY(-2px);
+    z-index: 3;
+    border-width: 2px;
+    box-shadow:
+      inset 0 1px 2px rgba(255,255,255,.52),
+      0 0 0 2px rgba(255,255,255,.38),
+      0 0 14px var(--glow),
+      0 0 28px var(--glow);
+  }
+  .mood-score.ten.selected {
+    box-shadow:
+      inset 0 1px 3px rgba(255,255,255,.70),
+      0 0 0 2px rgba(206,243,255,.85),
+      0 0 16px rgba(86,200,255,.75),
+      0 0 34px rgba(86,200,255,.45);
+    filter: saturate(1.05) brightness(1.03);
+  }
+  .legend {
+    margin-top: 14px; display: flex; justify-content: space-between; gap: 12px;
+    font-size: 12.5px; color: #707592;
+  }
+  .legend strong { display: block; color: #15192A; font-size: 13px; margin-top: 2px; }
+  .kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .kpi {
+    border-radius: 22px; padding: 14px;
+    background: linear-gradient(145deg, rgba(255,255,255,.76), rgba(247,249,255,.56));
+    border: 1px solid rgba(255,255,255,.82);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 10px 24px rgba(57,65,110,.08);
+  }
+  .kpi .label { color: #757B96; font-size: 12.5px; font-weight: 700; margin-bottom: 7px; }
+  .kpi .value { font-size: 25px; font-weight: 900; letter-spacing: -.04em; }
+  .kpi .desc { margin-top: 4px; font-size: 12.5px; color: #6C728C; }
+  .chart-header { display:flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+  .mini { color:#7A8099; font-size:12.5px; font-weight:700; }
+  .chart-card { padding: 14px 14px 10px; }
+  .chart-frame {
+    border-radius: 24px; overflow: hidden;
+    background: linear-gradient(180deg, rgba(255,255,255,.72), rgba(246,248,255,.48));
+    border: 1px solid rgba(255,255,255,.7);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.9);
+  }
+  svg { display: block; width: 100%; height: auto; }
+  .chart-legend { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+  .tag {
+    display: inline-flex; align-items: center; gap: 7px; border-radius: 999px;
+    padding: 7px 10px; font-size: 12px; font-weight: 700; color: #40445C;
+    background: rgba(255,255,255,.58); border: 1px solid rgba(255,255,255,.72);
+  }
+  .sw { width: 9px; height: 9px; border-radius: 50%; box-shadow: 0 0 9px currentColor; }
+  .toolbar { display:flex; gap:10px; align-items:center; flex-wrap: wrap; margin-top: 14px; }
+  .btn {
+    border: none; min-height: 40px; padding: 0 14px; border-radius: 15px;
+    font-weight: 800; font-size: 13.5px; color: #15253A;
+    background: linear-gradient(145deg, rgba(255,255,255,.88), rgba(241,246,255,.64));
+    border: 1px solid rgba(255,255,255,.82);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.95), 0 10px 16px rgba(45,53,90,.08);
+    cursor: pointer; transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .btn:active { transform: scale(.97); }
+  .btn.primary {
+    color: white;
+    background: linear-gradient(145deg, rgba(86,200,255,.95), rgba(91,138,255,.92));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.35), 0 0 12px rgba(86,200,255,.32), 0 12px 20px rgba(70,130,255,.18);
+  }
+  .footer-note { color: #6B718B; font-size: 12.5px; line-height: 1.45; margin-top: 8px; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topnote">
+      <strong>Protótipo realista e leve.</strong> Esta página usa só <strong>HTML + CSS + SVG + um pouco de JavaScript</strong>.
+      Ou seja: o visual abaixo é um exemplo bem próximo do que é <strong>realmente viável</strong> no web app sem bibliotecas pesadas.
+    </div>
+
+    <section class="card">
+      <div class="row">
+        <div>
+          <div class="eyebrow">Registro emocional</div>
+          <h1>Escala 0–10</h1>
+          <div class="sub">9 em turquesa Tiffany e 10 em azul-diamante especial.</div>
+        </div>
+        <div class="pill"><span class="spark"></span> exemplo interativo</div>
+      </div>
+
+      <div style="height:14px"></div>
+
+      <div class="section-title">Como você está se sentindo agora?</div>
+      <div class="mood-scale" id="moodScale"></div>
+
+      <div class="legend">
+        <div>0<strong>muito, muito mal</strong></div>
+        <div style="text-align:center">5<strong>neutro</strong></div>
+        <div style="text-align:right">10<strong>estado ideal</strong></div>
+      </div>
+
+      <div class="toolbar">
+        <button class="btn" id="selectZero">Selecionar 0</button>
+        <button class="btn" id="selectNine">Selecionar 9</button>
+        <button class="btn primary" id="selectTen">Selecionar 10</button>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi">
+          <div class="label">Selecionado</div>
+          <div class="value" id="selectedValue">10</div>
+          <div class="desc" id="selectedDesc">Azul-diamante com destaque máximo.</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Estratégia visual</div>
+          <div class="desc" style="font-size:13.5px; line-height:1.45; color:#4F5674">
+            Outros níveis continuam bonitos, mas o <strong>10</strong> recebe acabamento mais especial para parecer raro.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card chart-card">
+      <div class="chart-header">
+        <div>
+          <div class="eyebrow">Análises</div>
+          <h1 style="font-size:19px">Humor nos últimos dias</h1>
+        </div>
+        <div class="mini">linha + área em degradê</div>
+      </div>
+
+      <div class="chart-frame">
+        <svg viewBox="0 0 360 210" id="lineChart" aria-label="Gráfico de linha"></svg>
+      </div>
+
+      <div class="chart-legend">
+        <span class="tag"><span class="sw" style="color:#7657FF;background:#7657FF"></span>0 usa aro violeta para não pesar</span>
+        <span class="tag"><span class="sw" style="color:#18E8CE;background:#18E8CE"></span>9 turquesa Tiffany</span>
+        <span class="tag"><span class="sw" style="color:#56C8FF;background:#56C8FF"></span>10 azul-diamante</span>
+      </div>
+    </section>
+
+    <section class="card chart-card">
+      <div class="chart-header">
+        <div>
+          <div class="eyebrow">Distribuição</div>
+          <h1 style="font-size:19px">Quantas vezes cada nota apareceu</h1>
+        </div>
+        <div class="mini">barras arredondadas</div>
+      </div>
+
+      <div class="chart-frame">
+        <svg viewBox="0 0 360 190" id="barChart" aria-label="Gráfico de barras"></svg>
+      </div>
+    </section>
+
+    <div class="footer-note">
+      Se este visual fizer sentido, o próximo passo é aplicar essa mesma linguagem no app:
+      <strong>escala emocional real</strong>, <strong>gráfico de linha</strong>, <strong>gráfico de barras</strong>,
+      fundo com degradê suave, cartões luminosos e microanimações leves.
+    </div>
+  </div>
+
+<script>
+const moodColors = 
+{
+  0: {bg: '#17171D', border: '#7657FF', glow: 'rgba(118,87,255,.48)', text: '#F6F5FF'},
+  1: {bg: '#FF3B30', border: '#FF766D', glow: 'rgba(255,59,48,.40)', text: '#FFFFFF'},
+  2: {bg: '#FF531A', border: '#FF8A63', glow: 'rgba(255,83,26,.38)', text: '#FFFFFF'},
+  3: {bg: '#FF7200', border: '#FFA24D', glow: 'rgba(255,114,0,.36)', text: '#FFFFFF'},
+  4: {bg: '#FF9800', border: '#FFBF5E', glow: 'rgba(255,152,0,.34)', text: '#FFFFFF'},
+  5: {bg: '#FFC800', border: '#FFE06A', glow: 'rgba(255,200,0,.32)', text: '#2E2200'},
+  6: {bg: '#D9F20C', border: '#EEFF75', glow: 'rgba(217,242,12,.32)', text: '#233100'},
+  7: {bg: '#70E03D', border: '#A3F17D', glow: 'rgba(112,224,61,.32)', text: '#0D2A00'},
+  8: {bg: '#26D99A', border: '#84F2CA', glow: 'rgba(38,217,154,.34)', text: '#022A20'},
+  9: {bg: '#18E8CE', border: '#86FFF0', glow: 'rgba(24,232,206,.36)', text: '#032822'},
+  10: {bg: '#56C8FF', border: '#B7EBFF', glow: 'rgba(86,200,255,.48)', text: '#03243B'}
+}
+;
+const lineValues = [2, 4, 7, 3, 8, 10, 9, 6];
+const distribution = [1, 2, 3, 4, 3, 2, 4, 6, 8, 5, 2];
+let selected = 10;
+
+function lighten(hex, amount) {
+  const n = hex.replace('#','');
+  let r = parseInt(n.substring(0,2),16);
+  let g = parseInt(n.substring(2,4),16);
+  let b = parseInt(n.substring(4,6),16);
+  r = Math.min(255, Math.round(r + (255-r)*amount));
+  g = Math.min(255, Math.round(g + (255-g)*amount));
+  b = Math.min(255, Math.round(b + (255-b)*amount));
+  return '#' + [r,g,b].map(x => x.toString(16).padStart(2,'0')).join('');
+}
+function darken(hex, amount) {
+  const n = hex.replace('#','');
+  let r = parseInt(n.substring(0,2),16);
+  let g = parseInt(n.substring(2,4),16);
+  let b = parseInt(n.substring(4,6),16);
+  r = Math.max(0, Math.round(r*(1-amount)));
+  g = Math.max(0, Math.round(g*(1-amount)));
+  b = Math.max(0, Math.round(b*(1-amount)));
+  return '#' + [r,g,b].map(x => x.toString(16).padStart(2,'0')).join('');
+}
+
+function descFor(value) {
+  if (value === 0) return "Grafite dramático com glow violeta.";
+  if (value === 10) return "Azul-diamante com destaque máximo.";
+  if (value === 9) return "Turquesa Tiffany, muito positivo e brilhante.";
+  if (value <= 4) return "Faixa quente, viva e sem tons amarronzados.";
+  if (value <= 6) return "Faixa intermediária com amarelos mais limpos.";
+  return "Faixa positiva com verde, mint e ciano.";
+}
+
+function buildMoodScale() {
+  const el = document.getElementById("moodScale");
+  el.innerHTML = "";
+  for (let i = 0; i <= 10; i++) {
+    const c = moodColors[i];
+    const b = document.createElement("button");
+    b.className = "mood-score" + (i === 0 ? " zero" : "") + (i === 10 ? " ten" : "");
+    b.type = "button";
+    b.dataset.value = i;
+    b.style.setProperty("--bgColor", c.bg);
+    b.style.setProperty("--border", c.border);
+    b.style.setProperty("--glow", c.glow);
+    b.style.setProperty("--textColor", c.text);
+    b.style.setProperty("--hi", lighten(c.bg, 0.18));
+    b.style.setProperty("--lo", darken(c.bg, i === 5 || i === 6 ? 0.02 : 0.10));
+    b.textContent = i;
+    if (i === selected) b.classList.add("selected");
+    b.addEventListener("click", () => {
+      selected = i;
+      updateSelected();
+    });
+    el.appendChild(b);
+  }
+}
+
+function updateSelected() {
+  document.querySelectorAll(".mood-score").forEach(btn => {
+    btn.classList.toggle("selected", Number(btn.dataset.value) === selected);
+  });
+  const value = document.getElementById("selectedValue");
+  const desc = document.getElementById("selectedDesc");
+  value.textContent = selected;
+  value.style.color = moodColors[selected].bg;
+  desc.textContent = descFor(selected);
+}
+
+function buildLineChart() {
+  const svg = document.getElementById("lineChart");
+  const width = 360, height = 210;
+  const left = 24, right = 20, top = 18, bottom = 28;
+  const innerW = width - left - right;
+  const innerH = height - top - bottom;
+  const maxY = 10;
+  const stepX = innerW / (lineValues.length - 1);
+
+  const pts = lineValues.map((v, i) => {
+    const x = left + i * stepX;
+    const y = top + innerH - (v / maxY) * innerH;
+    return {x, y, v};
+  });
+
+  let grid = "";
+  for (let i = 0; i <= 5; i++) {
+    const y = top + (innerH / 5) * i;
+    grid += '<line x1="' + left + '" y1="' + y + '" x2="' + (width-right) + '" y2="' + y + '" stroke="rgba(112,120,160,.12)" stroke-width="1"/>';
+  }
+
+  let stops = "";
+  let areaStops = "";
+  pts.forEach((p, i) => {
+    const off = (i / (pts.length - 1)) * 100;
+    stops += '<stop offset="' + off + '%" stop-color="' + moodColors[p.v].bg + '"/>';
+    areaStops += '<stop offset="' + off + '%" stop-color="' + moodColors[p.v].bg + '" stop-opacity=".22"/>';
+  });
+
+  let d = "";
+  pts.forEach((p, i) => {
+    d += (i ? " L " : "M ") + p.x + " " + p.y;
+  });
+  const last = pts[pts.length - 1];
+  const first = pts[0];
+  const areaD = d + " L " + last.x + " " + (height-bottom) + " L " + first.x + " " + (height-bottom) + " Z";
+
+  let labels = "";
+  pts.forEach((p, i) => {
+    labels += '<text x="' + p.x + '" y="' + (height-10) + '" text-anchor="middle" font-size="11.5" fill="#7B8098" font-weight="700">' + (i+1) + '</text>';
+  });
+
+  let dots = "";
+  pts.forEach((p) => {
+    const c = moodColors[p.v];
+    const r = p.v === 10 ? 6.6 : p.v === 0 ? 6 : 5.3;
+    const stroke = p.v === 0 ? "#7657FF" : c.border;
+    dots += '<circle cx="' + p.x + '" cy="' + p.y + '" r="' + (r+4) + '" fill="' + c.bg + '" opacity=".16" filter="url(#softGlow)"/>';
+    dots += '<circle cx="' + p.x + '" cy="' + p.y + '" r="' + r + '" fill="' + c.bg + '" stroke="' + stroke + '" stroke-width="' + (p.v===10 ? 2.5 : 2) + '" />';
+    if (p.v === 10) {
+      dots += '<circle cx="' + (p.x-1.4) + '" cy="' + (p.y-1.8) + '" r="1.8" fill="rgba(255,255,255,.88)"/>';
+    }
+  });
+
+  svg.innerHTML = ''
+    + '<defs>'
+    + '  <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">' + stops + '</linearGradient>'
+    + '  <linearGradient id="areaGrad" x1="0%" y1="0%" x2="100%" y2="0%">' + areaStops + '<stop offset="100%" stop-color="#56C8FF" stop-opacity=".10"/></linearGradient>'
+    + '  <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3.6" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>'
+    + '</defs>'
+    + '<rect width="' + width + '" height="' + height + '" fill="transparent"/>'
+    + grid
+    + '<path d="' + areaD + '" fill="url(#areaGrad)"/>'
+    + '<path d="' + d + '" fill="none" stroke="url(#lineGrad)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>'
+    + dots
+    + labels;
+}
+
+function buildBarChart() {
+  const svg = document.getElementById("barChart");
+  const width = 360, height = 190;
+  const left = 16, right = 10, top = 16, bottom = 28;
+  const innerW = width - left - right;
+  const innerH = height - top - bottom;
+  const maxV = Math.max(...distribution);
+  const gap = 6;
+  const colW = (innerW - gap * 10) / 11;
+
+  let defs = '<defs><filter id="barGlow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>';
+  let bars = "";
+  let labels = "";
+
+  for (let i = 0; i <= 10; i++) {
+    const c = moodColors[i];
+    const h = (distribution[i] / maxV) * (innerH - 8);
+    const x = left + i * (colW + gap);
+    const y = top + innerH - h;
+    defs += '<linearGradient id="barGrad' + i + '" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="' + c.border + '" stop-opacity=".98"/><stop offset="100%" stop-color="' + c.bg + '" stop-opacity=".92"/></linearGradient>';
+    bars += '<rect x="' + x + '" y="' + y + '" width="' + colW + '" height="' + h + '" rx="10" fill="url(#barGrad' + i + ')" stroke="' + (i===0 ? '#7657FF' : c.border) + '" stroke-width="' + (i===10 ? 2 : 1.25) + '" />';
+    bars += '<rect x="' + x + '" y="' + y + '" width="' + colW + '" height="' + h + '" rx="10" fill="' + c.bg + '" opacity=".10" filter="url(#barGlow)"/>';
+    bars += '<text x="' + (x + colW/2) + '" y="' + (y - 6) + '" text-anchor="middle" font-size="12" fill="#5A607C" font-weight="800">' + distribution[i] + '</text>';
+    labels += '<text x="' + (x + colW/2) + '" y="' + (height - 8) + '" text-anchor="middle" font-size="11.5" fill="#7B8098" font-weight="700">' + i + '</text>';
+  }
+  defs += '</defs>';
+
+  svg.innerHTML = defs
+    + '<rect width="' + width + '" height="' + height + '" fill="transparent"/>'
+    + '<line x1="' + left + '" y1="' + (height-bottom) + '" x2="' + (width-right) + '" y2="' + (height-bottom) + '" stroke="rgba(112,120,160,.18)" stroke-width="1"/>'
+    + bars + labels;
+}
+
+document.getElementById("selectZero").addEventListener("click", function() { selected = 0; updateSelected(); });
+document.getElementById("selectNine").addEventListener("click", function() { selected = 9; updateSelected(); });
+document.getElementById("selectTen").addEventListener("click", function() { selected = 10; updateSelected(); });
+
+buildMoodScale();
+updateSelected();
+buildLineChart();
+buildBarChart();
+</script>
+</body>
+</html>
