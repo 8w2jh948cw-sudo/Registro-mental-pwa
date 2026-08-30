@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>Editar barra inferior</title>
+<style>
+:root{color-scheme:light dark;--bg:#f2f2f7;--surface:rgba(255,255,255,.94);--text:#111;--muted:#6e6e73;--accent:#3478f6;--line:rgba(60,60,67,.18)}
+@media(prefers-color-scheme:dark){:root{--bg:#000;--surface:rgba(28,28,30,.94);--text:#f5f5f7;--muted:#aeaeb2;--line:rgba(84,84,88,.55)}}
+*{box-sizing:border-box}html,body{margin:0;height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif;color:var(--text)}body{display:grid;grid-template-rows:1fr auto;overflow:hidden}.frame{width:100%;height:100%;border:0;background:var(--bg)}.dock{padding:8px 12px calc(8px + env(safe-area-inset-bottom));display:grid;grid-template-columns:auto 1fr;gap:8px;background:var(--surface);border-top:1px solid var(--line);backdrop-filter:blur(24px) saturate(160%);-webkit-backdrop-filter:blur(24px) saturate(160%)}button{border:0;border-radius:14px;padding:12px 14px;font:700 14px/1 -apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif}.back{background:rgba(120,120,128,.14);color:var(--text)}.apply{background:var(--accent);color:white}.toast{position:fixed;left:50%;bottom:calc(76px + env(safe-area-inset-bottom));transform:translate(-50%,10px);opacity:0;background:#1c1c1e;color:#fff;padding:9px 12px;border-radius:12px;font-size:12px;transition:.2s;pointer-events:none}.toast.show{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<iframe class="frame" id="lab" src="./tabbar-lab.html" title="Laboratório da barra inferior"></iframe>
+<div class="dock"><button class="back" id="back">Voltar</button><button class="apply" id="apply">Aplicar ao app</button></div>
+<div class="toast" id="toast">Salvo</div>
+<script>
+const SETTINGS_KEY='registro-settings-v2';
+const DARK_DEFAULT={barWidth:95,barHeight:52,bottomOffset:10,barPadding:1,barRadius:80,barX:0,barOpacity:.11,barColor:'#ffffff',blur:2,saturation:260,brightness:105,barBorderWidth:.5,barBorderOpacity:.12,barBorderColor:'#ffffff',shadowOpacity:.19,shadowBlur:16,shadowY:8,shadowSpread:2,shadowColor:'#000000',bubbleWidth:.99,bubbleHeight:.99,bubbleX:0,bubbleY:0,bubbleOpacity:.5,bubbleColor:'#adadad',bubbleRadius:80,bubbleBorderWidth:1.25,bubbleBorderOpacity:.15,bubbleBorderColor:'#ffffff',bubbleShadowOpacity:.14,bubbleShadowBlur:10,bubbleShadowY:-1,iconSize:31,activeScale:1.32,iconY:-1,textSize:8,textWeight:650,itemGap:1,hideLabels:true,activeColor:'#000000',inactiveColor:'#ffffff',animateTabs:true,animationDuration:740,easing:'spring',pressScale:1,inactiveOpacity:.48,theme:'dark'};
+const LIGHT_DEFAULT={barWidth:95,barHeight:52,bottomOffset:10,barPadding:1,barRadius:80,barX:0,barOpacity:.11,barColor:'#ffffff',blur:2,saturation:260,brightness:105,barBorderWidth:.5,barBorderOpacity:.12,barBorderColor:'#ffffff',shadowOpacity:.19,shadowBlur:16,shadowY:8,shadowSpread:2,shadowColor:'#000000',bubbleWidth:.99,bubbleHeight:.99,bubbleX:0,bubbleY:0,bubbleOpacity:.5,bubbleColor:'#ffffff',bubbleRadius:80,bubbleBorderWidth:1.25,bubbleBorderOpacity:.15,bubbleBorderColor:'#ffffff',bubbleShadowOpacity:.14,bubbleShadowBlur:10,bubbleShadowY:-1,iconSize:31,activeScale:1.32,iconY:-1,textSize:8,textWeight:650,itemGap:1,hideLabels:true,activeColor:'#000000',inactiveColor:'#000000',animateTabs:true,animationDuration:740,easing:'spring',pressScale:1,inactiveOpacity:.48,theme:'light'};
+function settings(){try{return JSON.parse(localStorage.getItem(SETTINGS_KEY)||'{}')}catch{return{}}}
+function saveSettings(s){localStorage.setItem(SETTINGS_KEY,JSON.stringify(s))}
+function parseBlock(text){const out={};String(text||'').split(/\r?\n/).slice(1).forEach(line=>{const i=line.indexOf('=');if(i<1)return;const k=line.slice(0,i),raw=line.slice(i+1);if(raw==='true'||raw==='false')out[k]=raw==='true';else if(raw!==''&&!Number.isNaN(Number(raw)))out[k]=Number(raw);else out[k]=raw});return out}
+function loadIntoLab(theme){const frame=document.getElementById('lab'),win=frame.contentWindow;if(!win||!win.state||!win.render)return;const s=settings(),stored=s.tabBarStyles?.[theme],base=theme==='dark'?DARK_DEFAULT:LIGHT_DEFAULT;Object.assign(win.state,base,stored||{}, {theme});win.render()}
+function currentTheme(){const frame=document.getElementById('lab'),win=frame.contentWindow;return win?.state?.theme==='light'?'light':'dark'}
+const frame=document.getElementById('lab');frame.addEventListener('load',()=>{const win=frame.contentWindow;if(!win)return;const first=currentTheme();loadIntoLab(first);const themeBtn=win.document.getElementById('themeBtn');if(themeBtn){const original=themeBtn.onclick;themeBtn.onclick=()=>{const before=currentTheme();const s=settings();s.tabBarDrafts=s.tabBarDrafts||{};s.tabBarDrafts[before]=parseBlock(win.document.getElementById('out')?.value);saveSettings(s);original?.();const after=currentTheme(),latest=settings();const draft=latest.tabBarDrafts?.[after];if(draft)Object.assign(win.state,after==='dark'?DARK_DEFAULT:LIGHT_DEFAULT,draft,{theme:after});else loadIntoLab(after);win.render()}}});
+document.getElementById('apply').onclick=()=>{const win=frame.contentWindow,block=win?.document.getElementById('out')?.value,cfg=parseBlock(block),theme=cfg.theme==='light'?'light':'dark',s=settings();s.tabBarStyles=s.tabBarStyles||{};s.tabBarStyles[theme]={...(theme==='dark'?DARK_DEFAULT:LIGHT_DEFAULT),...cfg};s.hideTabLabels=Boolean(cfg.hideLabels);delete s.tabBarDrafts;saveSettings(s);const t=document.getElementById('toast');t.textContent=`Barra ${theme==='dark'?'escura':'clara'} salva`;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1300)};
+document.getElementById('back').onclick=()=>location.href='./index.html';
+</script>
+</body>
+</html>
