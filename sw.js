@@ -1,4 +1,4 @@
-const CACHE='registro-v16-0.4.11';
+const CACHE='registro-v17-0.4.12';
 const FILES=[
   './',
   './index.html',
@@ -19,7 +19,7 @@ const FILES=[
   './v04c12.js?v=0.4.5',
   './v04c13.js?v=0.4.6',
   './v04c14.js?v=0.4.7',
-  './v04c15.js?v=0.4.8',
+  './v04c15.js?v=0.4.12',
   './v04c16.js?v=0.4.11',
   './v04demo.js?v=0.4.1',
   './v04tabbar.js?v=0.4.2',
