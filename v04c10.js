@@ -13,5 +13,13 @@ document.getElementById('viewerCloseBtn').onclick=closeSheet;document.getElement
 
 document.addEventListener('click',e=>{if(e.target.closest('[data-menu],button,audio,input,textarea,select,a'))return;const card=e.target.closest('.timeline-item');if(!card)return;const id=card.querySelector('[data-menu]')?.dataset.menu;if(!id)return;e.preventDefault();e.stopImmediatePropagation();openEventViewer(id)},true);
 
+/* Cores semânticas: o mesmo tipo de registro mantém a mesma identidade em todas as telas. */
+(function ensureSemanticIconColors(){if(document.getElementById('semantic-icon-colors'))return;const st=document.createElement('style');st.id='semantic-icon-colors';st.textContent=`
+[data-icon="note"]{color:var(--accent)!important}
+[data-icon="pill"]{color:var(--med)!important}
+[data-icon="moon"]{color:var(--sleep)!important}
+[data-icon="bag"]{color:var(--buy)!important}
+`;document.head.appendChild(st)})();
+
 /* Carrega os motores extras em ordem: Aprendizado -> check-ins/gráficos/revisão -> continuidade -> entrevista pessoal. */
 (function loadLearningEngine(){if(document.querySelector('script[data-learning-engine]'))return;const s=document.createElement('script');s.dataset.learningEngine='true';s.src='./v04c11.js?v=0.4.4';s.onerror=()=>console.error('Falha ao carregar o motor de Aprendizado');s.onload=()=>{if(document.querySelector('script[data-emotion-engine]'))return;const e=document.createElement('script');e.dataset.emotionEngine='true';e.src='./v04c12.js?v=0.4.5';e.onerror=()=>console.error('Falha ao carregar check-ins e gráficos');e.onload=()=>{if(document.querySelector('script[data-continuity-engine]'))return;const c=document.createElement('script');c.dataset.continuityEngine='true';c.src='./v04c13.js?v=0.4.6';c.onerror=()=>console.error('Falha ao carregar alertas de continuidade');c.onload=()=>{if(document.querySelector('script[data-interview-engine]'))return;const i=document.createElement('script');i.dataset.interviewEngine='true';i.src='./v04c14.js?v=0.4.7';i.onerror=()=>console.error('Falha ao carregar entrevista pessoal');document.head.appendChild(i)};document.head.appendChild(c)};document.head.appendChild(e)};document.head.appendChild(s)})();
