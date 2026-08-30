@@ -1,4 +1,4 @@
-const CACHE='registro-v6-0.4.1';
+const CACHE='registro-v7-0.4.2';
 const FILES=[
   './',
   './index.html',
@@ -15,8 +15,10 @@ const FILES=[
   './v04c8.js?v=0.4.0',
   './v04c9.js?v=0.4.0',
   './v04demo.js?v=0.4.1',
+  './v04tabbar.js?v=0.4.2',
   './manifest.webmanifest?v=0.4.0',
-  './tabbar-lab.html'
+  './tabbar-lab.html',
+  './tabbar-editor.html'
 ];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(FILES)));self.skipWaiting()});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));self.clients.claim()});
