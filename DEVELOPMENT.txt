@@ -1,5 +1,5 @@
 REGISTRO — DESENVOLVIMENTO
-Versão atual: 0.3.0
+Versão atual: 0.4.0
 
 OBJETIVO
 Web app iPhone-first para registrar e cruzar, de forma independente:
@@ -14,54 +14,85 @@ A aba Análises apresenta padrões matemáticos, contexto e associações tempor
 
 ANÁLISE ATUAL — REGRA DE TEMPO
 - Quando existe um sono recente válido, o ciclo atual começa no último despertar registrado.
-- Medicamentos tomados depois do despertar aparecem como “Medicamentos desde o último despertar”.
+- Medicamentos tomados depois do despertar aparecem no ciclo atual.
 - Medicamentos das 24 horas anteriores ao despertar aparecem separadamente como contexto temporal.
-- Se não houver um despertar utilizável, o app usa as últimas 24 horas como período provisório.
+- Se não houver um despertar utilizável, o app usa as últimas 24 horas.
 - Meia-noite não é usada como limite obrigatório do “dia” do usuário.
 
+CADASTRO DE MEDICAMENTOS
+Estrutura: Medicamento → apresentações → compras/administrações.
+- Medicamento: princípio ativo, marca/referência opcional, laboratório opcional e anotações próprias.
+- Apresentação: dosagem, unidade, forma, marca/laboratório, unidades por caixa e unidades por cartela.
+- Um mesmo princípio ativo pode ter várias apresentações, permitindo comparar dosagens e preços diferentes.
+- Registros antigos continuam compatíveis; na primeira abertura da v0.4 o app pode gerar perfis básicos a partir dos nomes já usados.
+
+ADMINISTRAÇÃO
+- Busca de medicamentos cadastrados ignora caixa e acentos e tolera pequenos erros de digitação.
+- Quando existem dados suficientes, o app pode sugerir um medicamento com base no horário habitual registrado.
+- Dois modos de dose: dose total ou dose por unidade × quantidade.
+- Quantidade começa em 1.
+- O cálculo de dose total é automático no modo por unidade.
+
+COMPRAS, CUSTO E DURAÇÃO
+- Compra pode ser vinculada a uma apresentação específica e informar número de caixas.
+- Se houver unidades por caixa, o app calcula custo por comprimido/cápsula/unidade.
+- Se houver unidades por cartela, calcula também custo por cartela.
+- Cada caixa comprada vira um lote separado para estimar duração e unidades restantes usando as administrações registradas.
+- O consumo é atribuído em ordem cronológica (FIFO) aos lotes disponíveis.
+- O app também apresenta custo aproximado das unidades administradas nos últimos 30 dias quando há preço conhecido.
+- Esses cálculos dependem da qualidade dos registros e são auxiliares, não controle farmacêutico oficial.
+
+ANOTAÇÕES POR MEDICAMENTO
+- Cada medicamento possui bloco próprio de anotações.
+- Relatos diários feitos até 6 horas após uma administração podem aparecer como sugestões de associação.
+- O usuário decide explicitamente se quer copiar o relato para as anotações do medicamento.
+- A sugestão nunca afirma que o medicamento causou o sintoma/estado relatado.
+
 SONO
-- Registro manual com início, fim, qualidade opcional e observação.
+- Registro manual com início, fim, qualidade 1–5 e observação.
+- O horário inicial sugerido em 8h atrás NÃO recebe a tag “agora”.
+- Quando apenas o horário de acordar é “agora”, o espaço da tag é reservado para manter os campos alinhados.
+- Quando nenhum horário representa o momento atual, os campos podem ocupar a largura completa.
+- Qualidade usa seletor visual colorido 1–5; o resumo mostra número único e cor, sem X/Y.
 - Importação preparada para Apple Saúde via Atalho do iPhone.
-- Modos de importação: Auto, Revisar (padrão) e Perguntar.
-- Em Revisar, horários, qualidade e observações podem ser corrigidos antes de salvar.
-- Importações exatas repetidas são bloqueadas para evitar duplicação.
-- O registro manual + Sono permanece sempre disponível.
-
-ATALHO / APP SAÚDE
-Formato aceito pela PWA:
-?import=sleep&sleepStart=INICIO_ISO&sleepEnd=FIM_ISO
-Parâmetros opcionais:
-&sleepQuality=1-5
-&sleepNote=texto
-
-O fluxo recomendado está documentado em SHORTCUT-SLEEP.txt.
+- Modos: Auto, Revisar (padrão) e Perguntar.
 
 INTERFACE
 - 4 abas: Início, Histórico, Análises e Ajustes.
-- Resumo diário em linhas separadas.
-- Anotação é a ação principal e recebe maior destaque visual.
-- Interface iPhone-first com hierarquia, alinhamento e espaçamento inspirados em padrões do iOS.
+- Resumo diário mais compacto.
+- Horários do histórico maiores, mais pesados e legíveis.
+- SVGs normalizados em wrappers quadrados para reduzir desalinhamentos de baseline/tamanho.
+- Barra inferior em cápsula com bolha também em cápsula e animação deslizante.
+- Seletores segmentados animados; respeitam prefers-reduced-motion.
+- Opção de ocultar os textos da barra inferior e aumentar visualmente os ícones.
+- Laboratório separado em tabbar-lab.html para testar opacidade da barra, opacidade da bolha e blur.
+
+PERSONALIZAÇÃO
 - Tema Sistema/Claro/Escuro.
 - Cores principais Lilás/Azul/Verde.
-- Tamanho e espessura de ícones configuráveis.
-- Opção “Mostrar versão no topo”.
+- Tamanho e espessura de ícones.
+- Tipografia Sistema ou Inter e peso base 400/500/600.
+- Opção Mostrar versão no topo.
+- Substituição de ícones por código do banco interno ou SVG.
+- SVG é texto XML e é armazenado nas configurações, portanto entra no backup JSON.
 
 BACKUP
-- Exportação e importação JSON.
+- Exportação e importação JSON incluem registros, cadastro de medicamentos e configurações/personalizações.
+- SVGs personalizados entram no JSON.
 - O app registra quando o último backup externo foi criado.
-- Aviso visual quando não existe backup ou quando o último backup tem 7 dias ou mais.
+- Aviso quando não existe backup ou quando ele tem 7 dias ou mais.
 - Gravações de voz ainda não entram no JSON e permanecem localmente.
 
 ARMAZENAMENTO
-- Registros continuam no IndexedDB registro-mental-v1 para preservar compatibilidade com dados anteriores.
+- Banco IndexedDB mantém o nome registro-mental-v1 para compatibilidade, agora na versão interna 2.
+- Stores: events, audio e medications.
 - Configurações ficam em localStorage.
 
 AINDA PLANEJADO
-- Edição completa de registros já salvos.
-- Transcrição automática de voz.
-- Cadastro estruturado de medicamentos.
-- Estoque de medicamentos.
-- Modelos farmacológicos mais sofisticados por substância, com fontes confiáveis.
+- Edição completa de registros históricos já salvos.
+- Transcrição de voz (adiada por decisão atual).
+- Estoque/lotes com correções manuais mais avançadas.
+- Modelos farmacológicos por substância com fontes confiáveis.
 - Relatórios/exportação para acompanhamento profissional.
 - Backup externo verdadeiramente automático e criptografado.
 - Sincronização entre aparelhos.
