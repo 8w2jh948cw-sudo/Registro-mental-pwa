@@ -11,3 +11,53 @@ async function restoreDemo(){if(!confirm('Substituir todos os registros pelos da
 async function clearData(){if(!confirm('Apagar todos os registros e cadastros deste aparelho?'))return;await req(store(EVENTS,'readwrite').clear());await req(store(AUDIO,'readwrite').clear());await req(store(MEDICATIONS,'readwrite').clear());localStorage.setItem('registro-demo-seeded','yes');await renderAll();toast('Dados locais apagados.')}
 
 function healthImportInfo(){openBackdrop('Sono do app Saúde',`<div class="analysis-row"><strong>Atalho como ponte</strong><span>O Atalho lê o sono no app Saúde e abre este PWA com os horários. “Revisar” continua sendo o modo recomendado.</span></div><p class="helper">O botão + Sono permanece disponível e os dados importados podem ser corrigidos.</p>${formButtons('Fechar')}`)}
+
+/* Edição de registros e proteção contra salvamento acidental pelo Enter */
+function editSetValue(id,value,events=true){const el=document.getElementById(id);if(!el)return;el.value=value??'';if(events){el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}))}}
+function editIsoFromField(id){const value=document.getElementById(id)?.value;if(!value)return null;const d=new Date(value);return Number.isNaN(d.getTime())?null:d.toISOString()}
+function editNumber(id){const raw=String(document.getElementById(id)?.value??'').trim();if(!raw)return null;const n=Number(raw.replace(',','.'));return Number.isFinite(n)?n:null}
+function editTitle(type){return type==='note'?'Editar anotação':type==='medication'?'Editar medicamento':type==='sleep'?'Editar sono':'Editar compra'}
+function finishEventEditor(existing){const form=document.getElementById('form');document.getElementById('sheetTitle').textContent=editTitle(existing.type);const submit=form.querySelector('button[type="submit"]');if(submit)submit.textContent='Salvar alterações';form.onsubmit=ev=>saveEditedEvent(ev,existing)}
+
+async function openEventEditor(id){const existing=(await allEvents()).find(x=>x.id===id);if(!existing)return;
+  if(existing.type==='note'){
+    await openNoteSheet();
+    editSetValue('noteText',existing.text||'',false);editSetValue('noteTag',existing.tag||'',false);editSetValue('recordTime',toLocalInput(existing.timestamp));
+  }else if(existing.type==='medication'){
+    await openMedicationSheet();
+    editSetValue('medName',existing.medication||'',false);editSetValue('medNote',existing.note||'',false);editSetValue('recordTime',toLocalInput(existing.timestamp));
+    const meds=await allMedications(),m=meds.find(x=>x.id===existing.medicationId)||findProfileByEvent(existing,meds);
+    if(m){selectedMedicationId=m.id;const field=document.getElementById('presentationField'),sel=document.getElementById('presentationSelect');field?.classList.remove('hidden');if(sel){sel.innerHTML=presentationOptions(m);sel.value=existing.presentationId||'';selectedPresentationId=sel.value||null;sel.onchange=async()=>{selectedPresentationId=sel.value||null;const activeMode=document.querySelector('[data-dose-mode].selected')?.dataset.doseMode||'perUnit';await renderDoseFields(activeMode)}}}
+    const mode=existing.doseMode||(existing.unitDoseValue!=null?'perUnit':'total'),modeBtn=document.querySelector(`[data-dose-mode="${mode}"]`);if(modeBtn){modeBtn.click();await new Promise(r=>requestAnimationFrame(()=>r()))}else await renderDoseFields(mode);
+    editSetValue('doseUnit',existing.doseUnit||'mg');
+    if(mode==='total')editSetValue('totalDoseValue',existing.totalDoseValue??(parseFloat(existing.dose)||''));else{const units=Number(existing.unitsTaken)||1;const unitDose=existing.unitDoseValue!=null?existing.unitDoseValue:(existing.totalDoseValue!=null?Number(existing.totalDoseValue)/units:'');editSetValue('unitDoseValue',unitDose);editSetValue('unitsTaken',units)}
+  }else if(existing.type==='purchase'){
+    await openPurchaseSheet();
+    editSetValue('purchaseMed',existing.medication||'',false);editSetValue('purchasePackages',existing.packages||1);editSetValue('purchasePrice',existing.price||'');editSetValue('purchasePlace',existing.place||'',false);editSetValue('recordTime',toLocalInput(existing.timestamp));
+    const meds=await allMedications(),m=meds.find(x=>x.id===existing.medicationId)||findProfileByEvent(existing,meds);
+    if(m){selectedMedicationId=m.id;const field=document.getElementById('purchasePresentationField'),sel=document.getElementById('purchasePresentation');field?.classList.remove('hidden');if(sel){sel.innerHTML=presentationOptions(m);sel.value=existing.presentationId||'';selectedPresentationId=sel.value||null;sel.onchange=()=>{selectedPresentationId=sel.value||null;updatePurchasePreview()}}}
+    await updatePurchasePreview();
+  }else if(existing.type==='sleep'){
+    openSleepSheet();editSetValue('sleepStart',toLocalInput(existing.startTime));editSetValue('sleepEnd',toLocalInput(existing.endTime));editSetValue('sleepNote',existing.note||'',false);const q=Number(existing.quality)||4;document.querySelector(`#sleepQuality [data-quality="${q}"]`)?.click();
+  }else return;
+  finishEventEditor(existing)
+}
+
+async function saveEditedEvent(ev,existing){ev.preventDefault();let record={...existing};
+  if(existing.type==='note'){
+    const text=document.getElementById('noteText').value.trim(),timestamp=editIsoFromField('recordTime');if(!text&&!pendingAudio&&!existing.hasAudio)return toast('Escreva ou grave uma anotação.');if(!timestamp)return toast('Informe uma data e horário válidos.');const hasAudio=Boolean(existing.hasAudio||pendingAudio);record={...existing,timestamp,text,tag:document.getElementById('noteTag').value.trim(),hasAudio,audioOnly:Boolean(hasAudio&&!text)};
+  }else if(existing.type==='medication'){
+    const name=document.getElementById('medName').value.trim(),timestamp=editIsoFromField('recordTime');if(!name)return toast('Informe o medicamento.');if(!timestamp)return toast('Informe uma data e horário válidos.');const mode=document.querySelector('[data-dose-mode].selected')?.dataset.doseMode||'perUnit',unit=document.getElementById('doseUnit')?.value||'mg';let totalDoseValue,unitsTaken=1,unitDoseValue=null;if(mode==='total'){totalDoseValue=editNumber('totalDoseValue');if(totalDoseValue==null)return toast('Informe a dose total.')}else{unitDoseValue=editNumber('unitDoseValue');unitsTaken=editNumber('unitsTaken')??1;if(unitDoseValue==null)return toast('Informe a dose de cada unidade.');totalDoseValue=unitDoseValue*unitsTaken}record={...existing,timestamp,medication:name,medicationId:selectedMedicationId||null,presentationId:selectedPresentationId||null,doseMode:mode,unitDoseValue,totalDoseValue,doseUnit:unit,unitsTaken,dose:`${totalDoseValue.toLocaleString('pt-BR')} ${unit}`,quantity:unitsTaken===1?'1 unidade':`${unitsTaken} unidades`,note:document.getElementById('medNote').value.trim()};
+  }else if(existing.type==='purchase'){
+    const name=document.getElementById('purchaseMed').value.trim(),timestamp=editIsoFromField('recordTime');if(!name)return toast('Informe o medicamento.');if(!timestamp)return toast('Informe uma data e horário válidos.');const packages=Math.max(1,editNumber('purchasePackages')??1),meds=await allMedications(),m=meds.find(x=>x.id===selectedMedicationId),p=findPresentation(m,selectedPresentationId),samePresentation=selectedPresentationId===existing.presentationId,upp=Number(p?.unitsPerPackage)||(samePresentation?Number(existing.unitsPerPackage):0);record={...existing,timestamp,medication:name,medicationId:selectedMedicationId||null,presentationId:selectedPresentationId||null,packages,totalUnits:upp?packages*upp:null,unitsPerPackage:upp||null,price:document.getElementById('purchasePrice').value.trim(),place:document.getElementById('purchasePlace').value.trim()};
+  }else if(existing.type==='sleep'){
+    const start=new Date(document.getElementById('sleepStart').value),end=new Date(document.getElementById('sleepEnd').value);if(!(start<end))return toast('O horário de acordar precisa ser posterior ao horário de dormir.');record={...existing,timestamp:end.toISOString(),startTime:start.toISOString(),endTime:end.toISOString(),quality:Number(document.getElementById('sleepQualityValue').value)||4,note:document.getElementById('sleepNote').value.trim()};
+  }
+  await putEvent(record);if(existing.type==='note'&&pendingAudio)await saveAudio(existing.id,pendingAudio);closeSheet();await renderAll();toast('Alterações salvas.')
+}
+
+openEventMenu=async function(id){const existing=(await allEvents()).find(x=>x.id===id);if(!existing)return;openBackdrop('Opções do registro',`<div class="sheet-options"><button type="button" class="sheet-option" id="editEventBtn">Editar registro</button><button type="button" class="sheet-option danger" id="deleteBtn">Excluir registro</button></div>${formButtons('Fechar')}`,(ev)=>{ev.preventDefault();closeSheet()});document.getElementById('editEventBtn').onclick=()=>openEventEditor(id);document.getElementById('deleteBtn').onclick=async()=>{if(confirm('Excluir este registro?')){await deleteEvent(id);closeSheet();await renderAll();toast('Registro excluído.')}}}
+
+const registroForm=document.getElementById('form');registroForm?.addEventListener('keydown',e=>{if(e.key!=='Enter'||e.isComposing)return;const target=e.target;if(target instanceof HTMLTextAreaElement)return;if(target instanceof HTMLInputElement||target instanceof HTMLSelectElement){e.preventDefault();e.stopPropagation();target.blur();document.getElementById('medAutocomplete')?.classList.add('hidden')}},true);
+
+document.addEventListener('click',e=>{if(e.target.closest('[data-menu],button,audio,input,textarea,select,a'))return;const card=e.target.closest('.timeline-item');if(!card)return;const id=card.querySelector('[data-menu]')?.dataset.menu;if(id)openEventEditor(id)});
