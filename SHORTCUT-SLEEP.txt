@@ -1,0 +1,37 @@
+REGISTRO — IMPORTAR SONO DO APP SAÚDE PELO ATALHOS
+Versão do app: 0.3.0
+
+OBJETIVO
+Usar o app Atalhos como ponte entre o Apple Saúde/Apple Watch e o PWA Registro.
+O PWA não acessa o HealthKit diretamente.
+
+FLUXO
+1. No Atalho, buscar as amostras de Saúde relacionadas a Sono.
+2. Selecionar o registro/período de sono mais recente.
+3. Obter o horário de início e o horário de fim.
+4. Formatar início e fim como datas ISO.
+5. Montar uma URL no formato:
+
+https://8w2jh948cw-sudo.github.io/Registro-mental-pwa/?import=sleep&sleepStart=INICIO_ISO&sleepEnd=FIM_ISO
+
+Opcionalmente também podem ser enviados:
+&sleepQuality=1 a 5
+&sleepNote=texto
+
+6. Usar a ação “Abrir URLs”.
+7. O Registro recebe o sono e segue a preferência escolhida em:
+   Ajustes > Saúde e sono > Ao receber um sono do Atalho
+
+MODOS
+- Auto: salva imediatamente, evitando duplicar exatamente o mesmo período.
+- Revisar: abre uma tela com início, fim, qualidade e observação editáveis antes de salvar. É o padrão recomendado.
+- Perguntar: oferece escolher entre revisar ou salvar imediatamente em cada importação.
+
+AUTOMAÇÃO RECOMENDADA
+Primeiro testar o Atalho manualmente.
+Depois, no app Atalhos > Automação, usar preferencialmente um acionador ligado ao sono, como:
+- quando o Foco Sono for desativado; ou
+- ao acordar, se esse acionador funcionar bem com a rotina configurada no iPhone.
+
+IMPORTANTE
+O botão + Sono continua disponível no app. Dados do Apple Watch são apenas uma fonte inicial e podem ser corrigidos antes de salvar.
