@@ -13,5 +13,5 @@ document.getElementById('viewerCloseBtn').onclick=closeSheet;document.getElement
 
 document.addEventListener('click',e=>{if(e.target.closest('[data-menu],button,audio,input,textarea,select,a'))return;const card=e.target.closest('.timeline-item');if(!card)return;const id=card.querySelector('[data-menu]')?.dataset.menu;if(!id)return;e.preventDefault();e.stopImmediatePropagation();openEventViewer(id)},true);
 
-/* Carrega o motor de Aprendizado separadamente para manter esta camada de segurança independente. */
-(function loadLearningEngine(){if(document.querySelector('script[data-learning-engine]'))return;const s=document.createElement('script');s.dataset.learningEngine='true';s.src='./v04c11.js?v=0.4.4';s.onerror=()=>console.error('Falha ao carregar o motor de Aprendizado');document.head.appendChild(s)})();
+/* Carrega os motores extras em ordem: Aprendizado -> check-ins/gráficos/revisão. */
+(function loadLearningEngine(){if(document.querySelector('script[data-learning-engine]'))return;const s=document.createElement('script');s.dataset.learningEngine='true';s.src='./v04c11.js?v=0.4.4';s.onerror=()=>console.error('Falha ao carregar o motor de Aprendizado');s.onload=()=>{if(document.querySelector('script[data-emotion-engine]'))return;const e=document.createElement('script');e.dataset.emotionEngine='true';e.src='./v04c12.js?v=0.4.5';e.onerror=()=>console.error('Falha ao carregar check-ins e gráficos');document.head.appendChild(e)};document.head.appendChild(s)})();
