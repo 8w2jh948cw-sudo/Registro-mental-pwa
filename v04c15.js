@@ -1,7 +1,7 @@
 /* Paletas semânticas dos tipos de registro: alternância em Ajustes + aplicação global consistente. */
 const REGISTRO_SEMANTIC_PALETTES={
   suggested:{label:'Paleta sugerida',note:'#7259D6',medication:'#00C7BE',sleep:'#4A63B7',purchase:'#FF9500'},
-  user:{label:'Sua paleta',note:'#3C9BB3',medication:'#00C0E7',sleep:'#6155F4',purchase:'#3B9BB2'}
+  user:{label:'Sua paleta',note:'#0188FE',medication:'#00C0E7',sleep:'#6155F4',purchase:'#3B9BB2'}
 };
 
 function semanticPaletteKey(){return getSettings().semanticPalette==='user'?'user':'suggested'}
