@@ -1,4 +1,4 @@
-const APP_VERSION='0.4.0';
+const APP_VERSION='0.4.1';
 const DB_NAME='registro-mental-v1';
 const EVENTS='events';
 const AUDIO='audio';
@@ -31,7 +31,7 @@ const baseIcons={
 
 const defaultSettings={theme:'system',accent:'violet',iconSize:'medium',iconWeight:'regular',showVersion:true,healthImportMode:'review',fontFamily:'system',fontWeight:'400',hideTabLabels:false,iconOverrides:{}};
 
-function esc(v=''){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
+function esc(v=''){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#039;'}[c]))}
 function uid(p){return `${p}-${Date.now()}-${Math.random().toString(36).slice(2,8)}`}
 function localDate(date){const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,'0'),d=String(date.getDate()).padStart(2,'0');return `${y}-${m}-${d}`}
 function toLocalInput(iso=new Date().toISOString()){const d=new Date(iso),off=d.getTimezoneOffset()*60000;return new Date(d.getTime()-off).toISOString().slice(0,16)}
