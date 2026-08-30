@@ -1,9 +1,9 @@
 {
-  "name": "Registro — Diário e Medicação",
+  "name": "Registro — Diário, Medicação e Sono",
   "short_name": "Registro",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#f4f4f6",
-  "theme_color": "#f4f4f6",
-  "description": "Diário pessoal local para anotações, administrações e compras de medicamentos."
+  "background_color": "#f5f5f7",
+  "theme_color": "#f5f5f7",
+  "description": "Diário pessoal local para anotações, medicamentos, sono, compras e análises temporais."
 }
