@@ -1,52 +1,67 @@
-REGISTRO — V1 DE DESENVOLVIMENTO
+REGISTRO — DESENVOLVIMENTO
+Versão atual: 0.3.0
 
-Objetivo
--------
-Web app iPhone-first para registrar, de forma independente:
-
-1. Anotações pessoais (texto e/ou gravação de voz)
+OBJETIVO
+Web app iPhone-first para registrar e cruzar, de forma independente:
+1. Anotações pessoais (texto e/ou voz)
 2. Administrações de medicamentos/substâncias
-3. Compras de medicamentos
+3. Sono
+4. Compras de medicamentos
 
-Todos os registros recebem data e horário e formam uma linha do tempo comum.
+PRINCÍPIO DAS ANÁLISES
+O app NÃO deve afirmar causalidade, fazer diagnóstico médico ou recomendar tratamento.
+A aba Análises apresenta padrões matemáticos, contexto e associações temporais observadas nos registros.
 
-IMPORTANTE
-----------
-Esta versão NÃO faz diagnóstico, recomendação médica ou inferência causal.
-A futura área de análises deverá apenas apontar padrões matemáticos e associações temporais presentes nos registros do próprio usuário.
+ANÁLISE ATUAL — REGRA DE TEMPO
+- Quando existe um sono recente válido, o ciclo atual começa no último despertar registrado.
+- Medicamentos tomados depois do despertar aparecem como “Medicamentos desde o último despertar”.
+- Medicamentos das 24 horas anteriores ao despertar aparecem separadamente como contexto temporal.
+- Se não houver um despertar utilizável, o app usa as últimas 24 horas como período provisório.
+- Meia-noite não é usada como limite obrigatório do “dia” do usuário.
 
-Dados fictícios iniciais
-------------------------
-- “Estou mais tranquilo agora.”
-- Paroxetina 20 mg
-- “Estava bastante ansioso durante a tarde.”
-- Bupropiona 150 mg
+SONO
+- Registro manual com início, fim, qualidade opcional e observação.
+- Importação preparada para Apple Saúde via Atalho do iPhone.
+- Modos de importação: Auto, Revisar (padrão) e Perguntar.
+- Em Revisar, horários, qualidade e observações podem ser corrigidos antes de salvar.
+- Importações exatas repetidas são bloqueadas para evitar duplicação.
+- O registro manual + Sono permanece sempre disponível.
 
-Esses registros existem apenas como referência visual e de desenvolvimento.
+ATALHO / APP SAÚDE
+Formato aceito pela PWA:
+?import=sleep&sleepStart=INICIO_ISO&sleepEnd=FIM_ISO
+Parâmetros opcionais:
+&sleepQuality=1-5
+&sleepNote=texto
 
-Funcionalidades desta V1
-------------------------
-- Interface iPhone-first
-- Resumo do dia
-- Registro independente de anotação
-- Registro independente de administração
-- Registro independente de compra
-- Data e horário automáticos, porém editáveis antes de salvar
-- Gravação de voz local quando suportada pelo navegador
-- Linha do tempo cronológica
-- Exclusão de registros
-- Persistência local em IndexedDB
-- PWA básica/offline
-- Tema claro/escuro conforme o sistema
+O fluxo recomendado está documentado em SHORTCUT-SLEEP.txt.
 
-Ainda não implementado
-----------------------
-- Transcrição automática
-- Edição completa de registros salvos
-- Cadastro estruturado de medicamentos
-- Estoque
-- Análises/correlações
-- Tempo de ação e duração de efeitos
-- Exportação/backup
-- Sincronização
-- Relatório para médico
+INTERFACE
+- 4 abas: Início, Histórico, Análises e Ajustes.
+- Resumo diário em linhas separadas.
+- Anotação é a ação principal e recebe maior destaque visual.
+- Interface iPhone-first com hierarquia, alinhamento e espaçamento inspirados em padrões do iOS.
+- Tema Sistema/Claro/Escuro.
+- Cores principais Lilás/Azul/Verde.
+- Tamanho e espessura de ícones configuráveis.
+- Opção “Mostrar versão no topo”.
+
+BACKUP
+- Exportação e importação JSON.
+- O app registra quando o último backup externo foi criado.
+- Aviso visual quando não existe backup ou quando o último backup tem 7 dias ou mais.
+- Gravações de voz ainda não entram no JSON e permanecem localmente.
+
+ARMAZENAMENTO
+- Registros continuam no IndexedDB registro-mental-v1 para preservar compatibilidade com dados anteriores.
+- Configurações ficam em localStorage.
+
+AINDA PLANEJADO
+- Edição completa de registros já salvos.
+- Transcrição automática de voz.
+- Cadastro estruturado de medicamentos.
+- Estoque de medicamentos.
+- Modelos farmacológicos mais sofisticados por substância, com fontes confiáveis.
+- Relatórios/exportação para acompanhamento profissional.
+- Backup externo verdadeiramente automático e criptografado.
+- Sincronização entre aparelhos.
