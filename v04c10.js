@@ -12,3 +12,6 @@ openBackdrop(title,`<div class="analysis-stack">${rows.join('')}${audio}</div><d
 document.getElementById('viewerCloseBtn').onclick=closeSheet;document.getElementById('viewerEditBtn').onclick=()=>openEventEditor(id);if(e.hasAudio)await hydrateAudio(document.getElementById('form'))}
 
 document.addEventListener('click',e=>{if(e.target.closest('[data-menu],button,audio,input,textarea,select,a'))return;const card=e.target.closest('.timeline-item');if(!card)return;const id=card.querySelector('[data-menu]')?.dataset.menu;if(!id)return;e.preventDefault();e.stopImmediatePropagation();openEventViewer(id)},true);
+
+/* Carrega o motor de Aprendizado separadamente para manter esta camada de segurança independente. */
+(function loadLearningEngine(){if(document.querySelector('script[data-learning-engine]'))return;const s=document.createElement('script');s.dataset.learningEngine='true';s.src='./v04c11.js?v=0.4.4';s.onerror=()=>console.error('Falha ao carregar o motor de Aprendizado');document.head.appendChild(s)})();
