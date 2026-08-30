@@ -1,4 +1,4 @@
-const CACHE='registro-v14-0.4.9';
+const CACHE='registro-v15-0.4.10';
 const FILES=[
   './',
   './index.html',
@@ -22,11 +22,11 @@ const FILES=[
   './v04c15.js?v=0.4.8',
   './v04demo.js?v=0.4.1',
   './v04tabbar.js?v=0.4.2',
-  './v04navicons.js?v=0.4.8',
+  './v04navicons.js?v=0.4.9',
   './manifest.webmanifest?v=0.4.0',
   './tabbar-lab.html',
   './tabbar-editor.html'
 ];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(FILES)));self.skipWaiting()});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));self.clients.claim()});
-self.addEventListener('fetch',event=>{if(event.request.method!=='GET')return;const url=new URL(event.request.url);if(url.origin!==self.location.origin)return;event.respondWith(fetch(event.request).then(response=>{const copy=response.clone();caches.open(CACHE).then(cache=>cache.put(event.request,copy));return response}).catch(()=>caches.match(event.request).then(r=>r||caches.match('./index.html'))))});
+self.addEventListener('fetch',event=>{if(event.request.method!=='GET')return;const url=new URL(event.request.url);if(url.origin!==self.location.origin)return;const network=()=>fetch(event.request,url.pathname.endsWith('/v04navicons.js')?{cache:'reload'}:undefined);event.respondWith(network().then(response=>{const copy=response.clone();caches.open(CACHE).then(cache=>cache.put(event.request,copy));return response}).catch(()=>caches.match(event.request).then(r=>r||caches.match('./index.html'))))});
