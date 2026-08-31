@@ -19,3 +19,15 @@ function rmV32Finalize(){
 }
 rmV32Finalize();
 [250,900,1800].forEach(ms=>setTimeout(rmV32Finalize,ms));
+
+
+/* Carrega a correção de restauração e atualização automática. */
+(function rmV32LoadV33(){
+  if(document.querySelector('script[data-engine-key="v32-update-recovery"]'))return;
+  const s=document.createElement('script');
+  s.dataset.engineKey='v32-update-recovery';
+  s.src='./v04c33.js?v=0.4.33';
+  s.onload=()=>{try{rmV33UpdateVersion?.()}catch{}};
+  s.onerror=()=>console.error('Falha ao carregar revisão 0.4.33');
+  document.head.appendChild(s);
+})();
