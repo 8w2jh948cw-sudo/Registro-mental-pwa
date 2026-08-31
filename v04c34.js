@@ -6,7 +6,7 @@ function rmV34UniqueById(items){
   return [...new Map(items.map(item=>[item.id,{...item}])).values()];
 }
 function rmV34Transaction(mode,events,medications){
-  const stores=mode==='replace'?[EVENTS,AUDIO,MEDICATIONS]:[EVENTS,MEDICATIONS];
+  const stores=[EVENTS,MEDICATIONS];
   return new Promise((resolve,reject)=>{
     const transaction=db.transaction(stores,'readwrite');
     transaction.oncomplete=()=>resolve();
@@ -14,7 +14,6 @@ function rmV34Transaction(mode,events,medications){
     transaction.onabort=()=>reject(transaction.error||new Error('A restauração foi cancelada pelo banco local.'));
     if(mode==='replace'){
       transaction.objectStore(EVENTS).clear();
-      transaction.objectStore(AUDIO).clear();
       transaction.objectStore(MEDICATIONS).clear();
     }
     const eventStore=transaction.objectStore(EVENTS);
@@ -72,7 +71,7 @@ function rmV34OpenChoice(parsed,events,medications,ignored){
     <div class="analysis-row rm-v34-import-summary"><strong>Este backup contém ${esc(countText)}</strong><span>Escolha o que deve acontecer com os dados que já estão neste aparelho.${ignored?` ${ignored} item${ignored===1?'':'s'} inválido${ignored===1?'':'s'} não será${ignored===1?'':'ão'} importado${ignored===1?'':'s'}.`:''}</span></div>
     <div class="rm-v34-import-choice">
       <button type="button" class="primary-button full-button" id="rmImportReplace">Substituir tudo pelo backup</button>
-      <small>Apaga os registros, áudios e medicamentos atuais e restaura o conteúdo e as configurações deste backup. É a opção normal para recuperar uma cópia completa.</small>
+      <small>Apaga os registros e medicamentos atuais e restaura o conteúdo e as configurações deste backup. Gravações de áudio locais são preservadas, pois ainda não fazem parte do arquivo de backup.</small>
     </div>
     <div class="rm-v34-import-choice">
       <button type="button" class="secondary-button full-button" id="rmImportMerge">Somar aos dados atuais</button>
