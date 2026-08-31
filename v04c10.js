@@ -21,5 +21,22 @@ document.addEventListener('click',e=>{if(e.target.closest('[data-menu],button,au
 [data-icon="bag"]{color:var(--buy)!important}
 `;document.head.appendChild(st)})();
 
-/* Carrega os motores extras em ordem: Aprendizado -> check-ins/gráficos/revisão -> continuidade -> entrevista pessoal -> paletas semânticas -> ícones preenchidos -> acabamento do humor -> sistema visual global. */
-(function loadLearningEngine(){if(document.querySelector('script[data-learning-engine]'))return;const s=document.createElement('script');s.dataset.learningEngine='true';s.src='./v04c11.js?v=0.4.4';s.onerror=()=>console.error('Falha ao carregar o motor de Aprendizado');s.onload=()=>{if(document.querySelector('script[data-emotion-engine]'))return;const e=document.createElement('script');e.dataset.emotionEngine='true';e.src='./v04c12.js?v=0.4.5';e.onerror=()=>console.error('Falha ao carregar check-ins e gráficos');e.onload=()=>{if(document.querySelector('script[data-continuity-engine]'))return;const c=document.createElement('script');c.dataset.continuityEngine='true';c.src='./v04c13.js?v=0.4.6';c.onerror=()=>console.error('Falha ao carregar alertas de continuidade');c.onload=()=>{if(document.querySelector('script[data-interview-engine]'))return;const i=document.createElement('script');i.dataset.interviewEngine='true';i.src='./v04c14.js?v=0.4.7';i.onerror=()=>console.error('Falha ao carregar entrevista pessoal');i.onload=()=>{if(document.querySelector('script[data-semantic-palette-engine]'))return;const p=document.createElement('script');p.dataset.semanticPaletteEngine='true';p.src='./v04c15.js?v=0.4.14';p.onerror=()=>console.error('Falha ao carregar paletas semânticas');p.onload=()=>{if(document.querySelector('script[data-record-icons-engine]'))return;const r=document.createElement('script');r.dataset.recordIconsEngine='true';r.src='./v04c16.js?v=0.4.11';r.onerror=()=>console.error('Falha ao carregar ícones preenchidos de registros');r.onload=()=>{if(document.querySelector('script[data-mood-visual-engine]'))return;const m=document.createElement('script');m.dataset.moodVisualEngine='true';m.src='./v04c17.js?v=0.4.16';m.onerror=()=>console.error('Falha ao carregar acabamento visual do humor');m.onload=()=>{if(document.querySelector('script[data-rm-visual-engine]'))return;const v=document.createElement('script');v.dataset.rmVisualEngine='true';v.src='./v04c18.js?v=0.4.17';v.onerror=()=>console.error('Falha ao carregar o sistema visual global');document.head.appendChild(v)};document.head.appendChild(m)};document.head.appendChild(r)};document.head.appendChild(p)};document.head.appendChild(i)};document.head.appendChild(c)};document.head.appendChild(e)};document.head.appendChild(s)})();
+/* Carregamento otimizado: runtime de desempenho primeiro; motores independentes em paralelo; dependências em grupos curtos. */
+(function loadOptimizedEngines(){
+  const load=(src,key)=>new Promise((resolve,reject)=>{if(document.querySelector(`script[data-engine-key="${key}"]`))return resolve();const s=document.createElement('script');s.dataset.engineKey=key;s.src=src;s.onload=()=>{try{if(typeof rmInstallPerformanceRuntime==='function')rmInstallPerformanceRuntime()}catch{}resolve()};s.onerror=()=>{console.error(`Falha ao carregar ${key}`);reject(new Error(key))};document.head.appendChild(s)});
+  const start=async()=>{
+    try{await load('./v04c19.js?v=0.4.18','performance')}catch{}
+    const emotion=load('./v04c12.js?v=0.4.18','emotion');
+    const palette=load('./v04c15.js?v=0.4.18','semantic-palette');
+    const icons=load('./v04c16.js?v=0.4.18','record-icons');
+    const learning=load('./v04c11.js?v=0.4.18','learning');
+    await Promise.allSettled([emotion,palette,icons,learning]);
+    try{if(typeof rmInstallPerformanceRuntime==='function')rmInstallPerformanceRuntime()}catch{}
+    const visual=load('./v04c18.js?v=0.4.18','visual');
+    const continuity=Promise.resolve(learning).then(()=>load('./v04c13.js?v=0.4.18','continuity'));
+    await Promise.allSettled([visual,continuity]);
+    await Promise.resolve(continuity).then(()=>load('./v04c14.js?v=0.4.18','interview')).catch(()=>{});
+    try{if(typeof rmInstallPerformanceRuntime==='function')rmInstallPerformanceRuntime()}catch{}
+  };
+  start();
+})();
