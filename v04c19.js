@@ -1,6 +1,6 @@
 /* Runtime de desempenho: renderiza apenas a aba visível, memoriza telas prontas e evita reconstruções desnecessárias. */
 const RM_PERFORMANCE_VERSION='1.1.1';
-const RM_APP_RELEASE='0.4.23';
+const RM_APP_RELEASE='0.4.24';
 let rmRenderQueued=false,rmQueuedView=null,rmRenderSerial=0,rmDataRevision=0,rmHistoryLimit=80,rmHistoryFilterSeen=null,rmLastModuleSignature='';
 const rmViewCache=new Map();
 const RM_VIEW_TTL={home:30000,history:300000,analysis:300000,learning:300000,settings:60000};
@@ -47,12 +47,14 @@ async function rmRenderActive(view=null,{force=false}={}){
     if(typeof renderContinuityAnalysis==='function')await renderContinuityAnalysis(events,meds||[]);
     if(typeof renderPersonalInterviewAnalysisContext==='function')renderPersonalInterviewAnalysisContext();
     if(typeof rmFixAnalysisCopy==='function')rmFixAnalysisCopy();
+    if(typeof rmV24ColorizeAnalysis==='function')rmV24ColorizeAnalysis();
   }else if(view==='learning'){
     if(typeof renderLearning==='function')await renderLearning();
     if(typeof renderContinuityLearning==='function')await renderContinuityLearning(events,meds||[]);
     if(typeof renderPersonalInterview==='function')await renderPersonalInterview(events,meds||[]);
   }else if(view==='settings'){
     if(typeof ensureContinuitySettingsUI==='function')ensureContinuitySettingsUI();
+    if(typeof rmV24ConsolidateHealthSettings==='function')rmV24ConsolidateHealthSettings();
     renderBackupState();renderHealthState();
   }
   if(typeof rmApplyDimensionColors==='function')rmApplyDimensionColors(document.querySelector(`.view[data-view="${view}"]`)||document);
@@ -80,7 +82,7 @@ function rmInstallPerformanceRuntime(){
   }
   ['putEvent','deleteEvent','putMedication','deleteMedication'].forEach(rmWrapDataMutation);rmWrapSettingsMutation();
   try{if(typeof rmObserver!=='undefined')rmObserver.disconnect()}catch{}
-  const signature=[typeof renderQuantitativeDashboard,typeof renderLearning,typeof renderContinuityHome,typeof renderPersonalInterview].join('|');
+  const signature=[typeof renderQuantitativeDashboard,typeof renderLearning,typeof renderContinuityHome,typeof renderPersonalInterview,typeof rmV24ColorizeAnalysis].join('|');
   if(signature!==rmLastModuleSignature){rmLastModuleSignature=signature;rmInvalidate()}
   const top=document.getElementById('topVersion'),about=document.getElementById('versionLabel');
   if(top)top.textContent=`v${RM_APP_RELEASE}`;if(about)about.textContent=RM_APP_RELEASE;
