@@ -1,4 +1,4 @@
-const CACHE='registro-v25-0.4.18';
+const CACHE='registro-v26-0.4.18';
 const FILES=[
   './',
   './index.html',
@@ -45,16 +45,21 @@ self.addEventListener('fetch',event=>{
   const url=new URL(request.url);
   if(url.origin!==self.location.origin)return;
 
+  const isStatic=['script','style','font','image'].includes(request.destination)||/\.(?:js|css|webmanifest)$/i.test(url.pathname);
+  if(isStatic){
+    event.respondWith((async()=>{
+      const cache=await caches.open(CACHE),cached=await cache.match(request);
+      if(cached)return cached;
+      try{const response=await fetch(request);if(response.ok)await cache.put(request,response.clone());return response}catch{return new Response('Offline',{status:503,statusText:'Offline'})}
+    })());
+    return;
+  }
+
   event.respondWith((async()=>{
     const cache=await caches.open(CACHE);
     let cached=await cache.match(request);
     if(!cached&&request.mode==='navigate')cached=await cache.match('./index.html');
-
-    const refresh=fetch(request,{cache:'no-cache'}).then(async response=>{
-      if(response&&response.ok)await cache.put(request,response.clone());
-      return response;
-    }).catch(()=>null);
-
+    const refresh=fetch(request,{cache:'no-cache'}).then(async response=>{if(response&&response.ok)await cache.put(request,response.clone());return response}).catch(()=>null);
     if(cached){event.waitUntil(refresh);return cached}
     const network=await refresh;
     if(network)return network;
