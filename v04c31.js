@@ -39,3 +39,15 @@ new MutationObserver(records=>records.forEach(record=>record.addedNodes.forEach(
   if(node.nodeType===1)rmV31ApplyCloseIcons(node.matches?.('button')?node:node);
 }))).observe(document.body,{childList:true,subtree:true});
 [250,900,1800].forEach(ms=>setTimeout(rmV31Finalize,ms));
+
+
+/* Carrega o novo ícone de Histórico. */
+(function rmV31LoadV32(){
+  if(document.querySelector('script[data-engine-key="v32-history-icon"]'))return;
+  const s=document.createElement('script');
+  s.dataset.engineKey='v32-history-icon';
+  s.src='./v04c32.js?v=0.4.32';
+  s.onload=()=>{try{rmV32Finalize?.()}catch{}};
+  s.onerror=()=>console.error('Falha ao carregar revisão 0.4.32');
+  document.head.appendChild(s);
+})();
