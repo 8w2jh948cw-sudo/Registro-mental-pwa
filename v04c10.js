@@ -68,6 +68,8 @@ document.addEventListener('click',e=>{if(e.target.closest('[data-menu],button,au
     try{await load('./v04c26.js?v=0.4.26','tabbar-lab-fix')}catch{}
     try{if(typeof rmV25FinalizeVisualMode==='function')rmV25FinalizeVisualMode()}catch{}
     try{if(typeof rmInstallPerformanceRuntime==='function')rmInstallPerformanceRuntime()}catch{}
+    try{await load('./v04c27.js?v=0.4.27','batch-revision')}catch{}
+    try{if(typeof rmV27Finalize==='function')rmV27Finalize()}catch{}
   };
   start();
 })();
