@@ -1,6 +1,6 @@
 /* Runtime de desempenho: renderiza apenas a aba visível, memoriza telas prontas e evita reconstruções desnecessárias. */
 const RM_PERFORMANCE_VERSION='1.1.1';
-const RM_APP_RELEASE='0.4.19';
+const RM_APP_RELEASE='0.4.20';
 let rmRenderQueued=false,rmQueuedView=null,rmRenderSerial=0,rmDataRevision=0,rmHistoryLimit=80,rmHistoryFilterSeen=null,rmLastModuleSignature='';
 const rmViewCache=new Map();
 const RM_VIEW_TTL={home:30000,history:300000,analysis:300000,learning:300000,settings:60000};
