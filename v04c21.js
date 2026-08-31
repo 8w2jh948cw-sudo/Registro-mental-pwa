@@ -1,5 +1,5 @@
-/* Ajustes 0.4.20: organiza Aparência e move opções avançadas para uma página própria. */
-const RM_SETTINGS_LAYOUT_RELEASE='0.4.20';
+/* Ajustes 0.4.21: organiza Aparência, move opções avançadas para uma página própria e aplica o patch visual do editor DEV (base 0.4.19). */
+const RM_SETTINGS_LAYOUT_RELEASE='0.4.21';
 
 function rmSystemFontOnly(){
   const html=document.documentElement;
@@ -141,11 +141,36 @@ function rmCloseAdvancedSettings(){
   `;document.head.appendChild(st)
 })();
 
+/* Alterações exportadas pelo Editor Visual DEV. O arquivo informado foi editado sobre a interface 0.4.19. */
+(function rmDevEditsStyles(){
+  if(document.getElementById('rm-dev-edits-style'))return;
+  const st=document.createElement('style');st.id='rm-dev-edits-style';st.textContent=`
+  .view[data-view="home"] .home-header h1{position:relative;top:4px}
+  .view[data-view="home"] #recentTitle{position:relative;top:4px}
+  .view[data-view="home"] .recent-section .section-title-row .section-kicker{position:relative;top:8px}
+  .view[data-view="home"] .recent-section [data-go="history"]{position:relative;left:-4px;top:8px}
+  #quantitativeDashboard > section.analysis-card.analysis-review-item:nth-of-type(2) > .chart-card-head > div > p:nth-of-type(2){text-align:left!important}
+  #personalInterviewSection > p.helper{position:relative;top:-4px}
+  `;document.head.appendChild(st)
+})();
+
+function rmApplyDevEditsText(){
+  const p=document.querySelector('.view[data-view="learning"] .learning-explain > p');
+  if(p&&!p.dataset.rmDevTextPatched){
+    const expected='O app não inventa diagnósticos. Ele reconhece conceitos, respeita negações simples, observa quando expressões aparecem próximas e cruza isso com horários de medicamentos e sono. Quando não tem confiança, pergunta.';
+    if(p.textContent.trim()===expected){
+      p.innerHTML='O app não inventa diagnósticos.<br>Ele reconhece conceitos, respeita negações simples, observa quando expressões aparecem próximas e cruza isso com horários de medicamentos e sono. Quando não tem confiança, pergunta.';
+      p.dataset.rmDevTextPatched='1';
+    }
+  }
+}
+
 function rmApplySettingsLayout(){
   rmSystemFontOnly();
   rmEnsureVisualModeControl();
   rmMoveAdvancedSettings();
   rmCenterSuitableSettings();
+  rmApplyDevEditsText();
   const top=document.getElementById('topVersion'),about=document.getElementById('versionLabel');
   if(top)top.textContent=`v${RM_SETTINGS_LAYOUT_RELEASE}`;
   if(about)about.textContent=RM_SETTINGS_LAYOUT_RELEASE;
@@ -153,3 +178,5 @@ function rmApplySettingsLayout(){
 
 rmApplySettingsLayout();
 setTimeout(rmApplySettingsLayout,0);
+[700,1600,3200,6000].forEach(ms=>setTimeout(rmApplyDevEditsText,ms));
+document.addEventListener('click',e=>{if(e.target.closest('[data-tab="learning"]'))setTimeout(rmApplyDevEditsText,80)},true);
