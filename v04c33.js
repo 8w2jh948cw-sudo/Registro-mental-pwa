@@ -81,3 +81,15 @@ function rmV33InstallUpdateRuntime(){
 rmV33UpdateVersion();
 [250,900,1800].forEach(ms=>setTimeout(rmV33UpdateVersion,ms));
 rmV33InstallUpdateRuntime();
+
+
+/* Carrega os modos seguro de substituir ou combinar backups. */
+(function rmV33LoadV34(){
+  if(document.querySelector('script[data-engine-key="v33-backup-modes"]'))return;
+  const s=document.createElement('script');
+  s.dataset.engineKey='v33-backup-modes';
+  s.src='./v04c34.js?v=0.4.34';
+  s.onload=()=>{try{rmV34Finalize?.()}catch{}};
+  s.onerror=()=>console.error('Falha ao carregar revisão 0.4.34');
+  document.head.appendChild(s);
+})();
