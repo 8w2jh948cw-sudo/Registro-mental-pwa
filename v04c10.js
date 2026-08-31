@@ -65,6 +65,7 @@ document.addEventListener('click',e=>{if(e.target.closest('[data-menu],button,au
     await Promise.resolve(continuity).then(()=>load('./v04c14.js?v=0.4.25','interview')).catch(()=>{});
     try{await load('./v04c23.js?v=0.4.25','analysis-review')}catch{}
     try{await load('./v04c24.js?v=0.4.25','v24-fixes')}catch{}
+    try{await load('./v04c26.js?v=0.4.26','tabbar-lab-fix')}catch{}
     try{if(typeof rmV25FinalizeVisualMode==='function')rmV25FinalizeVisualMode()}catch{}
     try{if(typeof rmInstallPerformanceRuntime==='function')rmInstallPerformanceRuntime()}catch{}
   };
