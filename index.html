@@ -19,7 +19,7 @@
       <section class="view active" data-view="home">
         <header class="page-header home-header">
           <div>
-            <p class="eyebrow"><span id="dateLabel">Hoje</span><span class="version-inline" id="topVersion">v0.4.19</span></p>
+            <p class="eyebrow"><span id="dateLabel">Hoje</span><span class="version-inline" id="topVersion">Atualizando…</span></p>
             <h1>Registro</h1>
           </div>
           <button class="round-button" id="homeOptionsBtn" aria-label="Abrir ajustes">•••</button>
@@ -105,8 +105,8 @@
         <section class="settings-group"><h2>Dados</h2><div class="backup-warning hidden" id="backupWarning"><span data-icon="export"></span><div><strong>Backup desatualizado</strong><small id="backupWarningText">Crie um novo backup para manter uma cópia externa dos registros.</small></div></div><div class="settings-card list-card">
           <button class="settings-row" id="exportBtn"><span class="settings-row-icon" data-icon="export"></span><span><strong>Exportar dados</strong><small id="backupStatusText">Backup em JSON</small></span><span class="chevron">›</span></button>
           <div class="setting-separator inset"></div>
-          <button class="settings-row" id="importBtn"><span class="settings-row-icon" data-icon="import"></span><span><strong>Importar dados</strong><small>Mescla registros, medicamentos e personalizações</small></span><span class="chevron">›</span></button>
-        </div><p class="group-footnote">Os SVGs personalizados são texto XML e entram no backup JSON. Gravações de voz continuam apenas neste aparelho.</p></section>
+          <button class="settings-row" id="importBtn"><span class="settings-row-icon" data-icon="import"></span><span><strong>Importar dados</strong><small>Escolha entre substituir ou somar ao conteúdo atual</small></span><span class="chevron">›</span></button>
+        </div><p class="group-footnote">Os registros, medicamentos, configurações e SVGs personalizados entram no backup JSON.</p></section>
 
         <section class="settings-group"><h2>Desenvolvimento</h2><div class="settings-card list-card">
           <button class="settings-row no-icon" id="restoreDemoBtn"><span><strong>Restaurar dados fictícios</strong><small>Substitui os registros atuais pelos exemplos</small></span><span class="chevron">›</span></button>
@@ -114,7 +114,7 @@
           <button class="settings-row no-icon danger-row" id="clearBtn"><span><strong>Apagar todos os dados locais</strong><small>Remove registros e cadastros deste navegador</small></span><span class="chevron">›</span></button>
         </div></section>
 
-        <section class="settings-group about-group"><h2>Sobre</h2><div class="settings-card info-card"><div><span>Versão</span><strong id="versionLabel">0.4.19</strong></div><div><span>Armazenamento</span><strong>Local no aparelho</strong></div></div></section>
+        <section class="settings-group about-group"><h2>Sobre</h2><div class="settings-card info-card"><div><span>Versão</span><strong id="versionLabel">Atualizando…</strong></div><div><span>Armazenamento</span><strong>Local no aparelho</strong></div></div></section>
       </section>
     </main>
 
@@ -131,6 +131,7 @@
   <input type="file" id="importFile" accept="application/json,.json" hidden>
   <input type="file" id="svgImportFile" accept="image/svg+xml,.svg" hidden>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="./release-guard.js?v=0.4.35"></script>
   <script src="./v04c1.js?v=0.4.0"></script>
   <script src="./v04c2.js?v=0.4.0"></script>
   <script src="./v04c3.js?v=0.4.0"></script>
