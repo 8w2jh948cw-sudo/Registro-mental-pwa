@@ -39,3 +39,15 @@ function rmV29Finalize(){
 }
 rmV29Finalize();
 [250,900,1800].forEach(ms=>setTimeout(rmV29Finalize,ms));
+
+
+/* Carrega o alinhamento global dos controles de fechar. */
+(function rmV29LoadV30(){
+  if(document.querySelector('script[data-engine-key="v30-left-close"]'))return;
+  const s=document.createElement('script');
+  s.dataset.engineKey='v30-left-close';
+  s.src='./v04c30.js?v=0.4.30';
+  s.onload=()=>{try{rmV30Finalize?.()}catch{}};
+  s.onerror=()=>console.error('Falha ao carregar revisão 0.4.30');
+  document.head.appendChild(s);
+})();
