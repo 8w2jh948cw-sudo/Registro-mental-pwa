@@ -1,0 +1,4 @@
+Registro Mental — migração limpa 1.0.0
+
+Branch temporária de preparação. Não é a publicação final e não substitui o app atual.
+Objetivo: consolidar o estado atual em uma nova base sem a cadeia histórica 0.4.x.
