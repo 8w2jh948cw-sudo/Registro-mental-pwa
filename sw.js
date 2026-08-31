@@ -1,4 +1,4 @@
-const CACHE='registro-v29-0.4.21';
+const CACHE='registro-v30-0.4.22';
 const FILES=[
   './',
   './index.html',
@@ -14,23 +14,26 @@ const FILES=[
   './v04c7.js?v=0.4.0',
   './v04c8.js?v=0.4.0',
   './v04c9.js?v=0.4.0',
-  './v04c10.js?v=0.4.20',
-  './v04c11.js?v=0.4.20',
-  './v04c12.js?v=0.4.20',
-  './v04c13.js?v=0.4.20',
-  './v04c14.js?v=0.4.20',
-  './v04c15.js?v=0.4.20',
-  './v04c16.js?v=0.4.20',
-  './v04c18.js?v=0.4.20',
-  './v04c19.js?v=0.4.20',
-  './v04c20.js?v=0.4.20',
-  './v04c21.js?v=0.4.20',
+  './v04c10.js?v=0.4.19',
+  './v04c10.js?v=0.4.22',
+  './v04c11.js?v=0.4.22',
+  './v04c12.js?v=0.4.22',
+  './v04c13.js?v=0.4.22',
+  './v04c14.js?v=0.4.22',
+  './v04c15.js?v=0.4.22',
+  './v04c16.js?v=0.4.22',
+  './v04c18.js?v=0.4.22',
+  './v04c19.js?v=0.4.22',
+  './v04c20.js?v=0.4.22',
+  './v04c21.js?v=0.4.22',
+  './v04c22.js?v=0.4.22',
   './v04demo.js?v=0.4.2',
   './v04tabbar.js?v=0.4.2',
   './v04navicons.js?v=0.4.10',
   './manifest.webmanifest?v=0.4.0',
   './tabbar-lab.html',
-  './tabbar-editor.html'
+  './tabbar-editor.html',
+  './dev-editor.html'
 ];
 
 self.addEventListener('install',event=>{
