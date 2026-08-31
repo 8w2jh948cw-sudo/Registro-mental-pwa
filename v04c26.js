@@ -2,7 +2,7 @@
 const RM_V26_RELEASE='0.4.26';
 
 function rmV26OpenTabbarLab(){
-  location.href='./tabbar-lab.html?v=0.4.26';
+  location.href='./tabbar-lab.html';
 }
 
 /* Intercepta o botão mesmo depois de ele ser movido para Personalização avançada. */
