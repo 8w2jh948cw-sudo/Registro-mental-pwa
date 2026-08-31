@@ -61,3 +61,15 @@ function rmV30Finalize(){
 }
 rmV30Finalize();
 [250,900,1800].forEach(ms=>setTimeout(rmV30Finalize,ms));
+
+
+/* Carrega o novo símbolo de fechamento. */
+(function rmV30LoadV31(){
+  if(document.querySelector('script[data-engine-key="v31-close-icon"]'))return;
+  const s=document.createElement('script');
+  s.dataset.engineKey='v31-close-icon';
+  s.src='./v04c31.js?v=0.4.31';
+  s.onload=()=>{try{rmV31Finalize?.()}catch{}};
+  s.onerror=()=>console.error('Falha ao carregar revisão 0.4.31');
+  document.head.appendChild(s);
+})();
