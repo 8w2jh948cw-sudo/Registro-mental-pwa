@@ -34,20 +34,27 @@ document.addEventListener('click',e=>{if(e.target.closest('[data-menu],button,au
   if(typeof loadRichDemoScript==='function'&&!loadRichDemoScript.__rmOptimized){const previousDemoLoader=loadRichDemoScript;const optimized=async function(){try{if(db&&(await allEvents()).length){globalThis.ensureRichDemoData=globalThis.ensureRichDemoData||(async()=>{});return}}catch{}return previousDemoLoader()};optimized.__rmOptimized=true;loadRichDemoScript=optimized}
 })();
 
-/* Carregamento otimizado: runtime de desempenho primeiro; motores independentes em paralelo; dependências em grupos curtos. */
+/* Carregamento otimizado: interface e emoção primeiro; aprendizado/continuidade entram quando o navegador fica ocioso. */
 (function loadOptimizedEngines(){
   const load=(src,key)=>new Promise((resolve,reject)=>{if(document.querySelector(`script[data-engine-key="${key}"]`))return resolve();const s=document.createElement('script');s.dataset.engineKey=key;s.src=src;s.onload=()=>{try{if(typeof rmInstallPerformanceRuntime==='function')rmInstallPerformanceRuntime()}catch{}resolve()};s.onerror=()=>{console.error(`Falha ao carregar ${key}`);reject(new Error(key))};document.head.appendChild(s)});
+  const idle=()=>new Promise(resolve=>{if('requestIdleCallback'in window)requestIdleCallback(()=>resolve(),{timeout:1200});else setTimeout(resolve,350)});
   const start=async()=>{
     try{await load('./v04c19.js?v=0.4.18','performance')}catch{}
     const emotion=load('./v04c12.js?v=0.4.18','emotion');
     const palette=load('./v04c15.js?v=0.4.18','semantic-palette');
     const icons=load('./v04c16.js?v=0.4.18','record-icons');
-    const learning=load('./v04c11.js?v=0.4.18','learning');
-    await Promise.allSettled([emotion,palette,icons,learning]);
+    await Promise.allSettled([emotion,palette,icons]);
     try{if(typeof rmInstallPerformanceRuntime==='function')rmInstallPerformanceRuntime()}catch{}
-    const visual=load('./v04c18.js?v=0.4.18','visual');
+    await Promise.resolve(emotion).then(()=>load('./v04c18.js?v=0.4.18','visual')).catch(()=>{});
+    try{if(typeof rmInstallPerformanceRuntime==='function')rmInstallPerformanceRuntime()}catch{}
+
+    await idle();
+    const learning=load('./v04c11.js?v=0.4.18','learning');
+    await Promise.allSettled([learning]);
+    try{if(typeof rmInstallPerformanceRuntime==='function')rmInstallPerformanceRuntime()}catch{}
     const continuity=Promise.resolve(learning).then(()=>load('./v04c13.js?v=0.4.18','continuity'));
-    await Promise.allSettled([visual,continuity]);
+    await Promise.allSettled([continuity]);
+    try{if(typeof rmInstallPerformanceRuntime==='function')rmInstallPerformanceRuntime()}catch{}
     await Promise.resolve(continuity).then(()=>load('./v04c14.js?v=0.4.18','interview')).catch(()=>{});
     try{if(typeof rmInstallPerformanceRuntime==='function')rmInstallPerformanceRuntime()}catch{}
   };
