@@ -29,6 +29,9 @@ document.addEventListener('click',e=>{if(e.target.closest('[data-menu],button,au
     renderBackupState();renderHealthState();
   };
   if(typeof switchTab==='function'&&!switchTab.__rmPerformance){const previous=switchTab;const wrapped=function(name){previous(name);requestAnimationFrame(()=>{if(typeof renderAll==='function')renderAll().catch?.(console.error)})};wrapped.__rmPerformance=true;wrapped.__rmPrevious=previous;switchTab=wrapped}
+
+  /* Dados fictícios só são baixados quando o banco realmente está vazio. */
+  if(typeof loadRichDemoScript==='function'&&!loadRichDemoScript.__rmOptimized){const previousDemoLoader=loadRichDemoScript;const optimized=async function(){try{if(db&&(await allEvents()).length){globalThis.ensureRichDemoData=globalThis.ensureRichDemoData||async()=>{};return}}catch{}return previousDemoLoader()};optimized.__rmOptimized=true;loadRichDemoScript=optimized}
 })();
 
 /* Carregamento otimizado: runtime de desempenho primeiro; motores independentes em paralelo; dependências em grupos curtos. */
