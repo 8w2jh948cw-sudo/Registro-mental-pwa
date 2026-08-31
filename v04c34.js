@@ -71,7 +71,7 @@ function rmV34OpenChoice(parsed,events,medications,ignored){
     <div class="analysis-row rm-v34-import-summary"><strong>Este backup contém ${esc(countText)}</strong><span>Escolha o que deve acontecer com os dados que já estão neste aparelho.${ignored?` ${ignored} item${ignored===1?'':'s'} inválido${ignored===1?'':'s'} não será${ignored===1?'':'ão'} importado${ignored===1?'':'s'}.`:''}</span></div>
     <div class="rm-v34-import-choice">
       <button type="button" class="primary-button full-button" id="rmImportReplace">Substituir tudo pelo backup</button>
-      <small>Apaga os registros e medicamentos atuais e restaura o conteúdo e as configurações deste backup. Gravações de áudio locais são preservadas, pois ainda não fazem parte do arquivo de backup.</small>
+      <small>Apaga os registros e medicamentos atuais e restaura o conteúdo e as configurações deste backup. É a opção normal para recuperar uma cópia completa.</small>
     </div>
     <div class="rm-v34-import-choice">
       <button type="button" class="secondary-button full-button" id="rmImportMerge">Somar aos dados atuais</button>
@@ -120,3 +120,13 @@ function rmV34Finalize(){
 }
 rmV34Finalize();
 [250,900,1800].forEach(ms=>setTimeout(rmV34Finalize,ms));
+
+/* Carrega a consolidação da interface e do indicador oficial de versão. */
+(function rmV34LoadV35(){
+  if(document.querySelector('script[data-engine-key="v34-release-integrity"]'))return;
+  const script=document.createElement('script');
+  script.dataset.engineKey='v34-release-integrity';
+  script.src='./v04c35.js?v=0.4.35';
+  script.onerror=()=>console.error('Falha ao carregar revisão 0.4.35');
+  document.head.appendChild(script);
+})();
