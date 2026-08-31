@@ -1,0 +1,10 @@
+name: Build clean v1
+
+on:
+  workflow_dispatch:
+
+jobs:
+  placeholder:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Staging only; final app lives in Registro Mental V1"
