@@ -28,7 +28,7 @@ document.addEventListener('click',e=>{if(e.target.closest('[data-menu],button,au
     if(view==='history')await renderHistory(events);else if(view==='analysis')await renderAnalysis(events);else if(view==='home')await renderHome(events);
     renderBackupState();renderHealthState();
   };
-  if(typeof switchTab==='function'&&!switchTab.__rmPerformance){const previous=switchTab;const wrapped=function(name){previous(name);requestAnimationFrame(()=>{if(typeof renderAll==='function')renderAll().catch?.(console.error)})};wrapped.__rmPerformance=true;wrapped.__rmPrevious=previous;switchTab=wrapped}
+  if(typeof switchTab==='function'&&!switchTab.__rmEarlyPerformance&&!switchTab.__rmPerformance){const previous=switchTab;const wrapped=function(name){previous(name);requestAnimationFrame(()=>{if(typeof renderAll==='function')renderAll().catch?.(console.error)})};wrapped.__rmEarlyPerformance=true;wrapped.__rmPrevious=previous;switchTab=wrapped}
 
   /* Dados fictícios só são baixados quando o banco realmente está vazio. */
   if(typeof loadRichDemoScript==='function'&&!loadRichDemoScript.__rmOptimized){const previousDemoLoader=loadRichDemoScript;const optimized=async function(){try{if(db&&(await allEvents()).length){globalThis.ensureRichDemoData=globalThis.ensureRichDemoData||(async()=>{});return}}catch{}return previousDemoLoader()};optimized.__rmOptimized=true;loadRichDemoScript=optimized}
