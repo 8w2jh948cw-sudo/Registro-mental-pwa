@@ -132,3 +132,15 @@ html[data-theme="dark"] .rm-v28-timeline .rm-note-tag:before{background:color-mi
 
 function rmV28Finalize(){rmV28Styles();const top=document.getElementById('topVersion'),about=document.getElementById('versionLabel');if(top)top.textContent=`v${RM_V28_RELEASE}`;if(about)about.textContent=RM_V28_RELEASE;if(typeof rmInvalidate==='function')rmInvalidate('home','history','analysis');try{rmV27EnhanceHistoryFilters?.()}catch{}}
 rmV28Finalize();
+
+
+/* Carrega o refinamento visual seguinte após esta revisão. */
+(function rmV28LoadV29(){
+  if(document.querySelector('script[data-engine-key="v29-learning-buttons"]'))return;
+  const s=document.createElement('script');
+  s.dataset.engineKey='v29-learning-buttons';
+  s.src='./v04c29.js?v=0.4.29';
+  s.onload=()=>{try{rmV29Finalize?.()}catch{}};
+  s.onerror=()=>console.error('Falha ao carregar revisão 0.4.29');
+  document.head.appendChild(s);
+})();
