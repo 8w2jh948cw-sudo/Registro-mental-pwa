@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111218">
+<title>Registro · Editor de desenvolvedor</title>
+<style>
+:root{color-scheme:dark;--bg:#0d0e13;--panel:rgba(29,30,39,.92);--panel2:#22242d;--text:#f7f7fb;--muted:#a8abb8;--line:rgba(255,255,255,.11);--accent:#7c6cff;--danger:#ff5d67;--ok:#35d89a}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif;color:var(--text);-webkit-font-smoothing:antialiased}button,textarea{font:inherit}button{-webkit-tap-highlight-color:transparent}.shell{min-height:100dvh;background:radial-gradient(circle at 12% 2%,rgba(124,108,255,.20),transparent 30%),radial-gradient(circle at 88% 10%,rgba(46,199,255,.13),transparent 34%),#0d0e13}.top{position:fixed;z-index:100;left:0;right:0;top:0;padding:calc(9px + env(safe-area-inset-top)) 10px 9px;background:rgba(13,14,19,.88);backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);border-bottom:1px solid var(--line)}.topline{display:flex;align-items:center;justify-content:space-between;gap:8px;max-width:520px;margin:auto}.brand{min-width:0}.brand strong{display:block;font-size:15px}.brand small{display:block;color:var(--muted);font-size:10.5px;margin-top:1px}.top-actions{display:flex;gap:6px}.pill{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:999px;padding:8px 10px;font-size:11px;font-weight:750}.pill.primary{background:var(--accent);border-color:transparent}.navscroll{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;max-width:520px;margin:8px auto 0;padding-bottom:1px}.navscroll::-webkit-scrollbar{display:none}.navchip{flex:0 0 auto;border:1px solid var(--line);background:rgba(255,255,255,.055);color:var(--muted);border-radius:999px;padding:7px 10px;font-size:10.5px;font-weight:700}.navchip.active{background:rgba(124,108,255,.22);color:#fff;border-color:rgba(124,108,255,.55)}.stage{padding-top:calc(108px + env(safe-area-inset-top));padding-bottom:calc(92px + env(safe-area-inset-bottom));min-height:100dvh;display:flex;justify-content:center}.phone{position:relative;width:min(100%,480px);height:calc(100dvh - 200px - env(safe-area-inset-top) - env(safe-area-inset-bottom));min-height:420px;border-radius:28px 28px 0 0;overflow:hidden;background:#f5f5f7;box-shadow:0 20px 60px rgba(0,0,0,.45),0 0 0 1px rgba(255,255,255,.08)}iframe{border:0;width:100%;height:100%;display:block;background:#f5f5f7}.hint{position:absolute;z-index:3;left:50%;top:10px;transform:translateX(-50%);pointer-events:none;background:rgba(17,18,24,.82);color:#fff;border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:6px 10px;border-radius:999px;font-size:10px;white-space:nowrap;opacity:.88}.bottom{position:fixed;z-index:100;left:0;right:0;bottom:0;padding:8px 10px calc(9px + env(safe-area-inset-bottom));background:rgba(13,14,19,.92);backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);border-top:1px solid var(--line)}.bottom-inner{max-width:520px;margin:auto}.empty-editor{display:flex;justify-content:space-between;align-items:center;gap:10px}.empty-editor span{font-size:11px;color:var(--muted)}.count{color:#fff!important;font-weight:800}.editor{display:none}.editor.open{display:block}.selection-row{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:7px}.selection-info{min-width:0}.selection-info strong{display:block;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.selection-info small{display:block;color:var(--muted);font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}.mini-actions{display:flex;gap:5px}.mini{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:9px;padding:6px 8px;font-size:10px;font-weight:750}.mini.danger{color:#ff9ca3}.textline{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px}.textline textarea{width:100%;height:48px;resize:none;border:1px solid var(--line);background:#171820;color:#fff;border-radius:11px;padding:8px 9px;font-size:11.5px;outline:none}.apply{border:0;background:var(--accent);color:#fff;border-radius:11px;padding:0 11px;font-size:10.5px;font-weight:800}.tools{display:grid;grid-template-columns:1.25fr 1fr;gap:7px;margin-top:7px}.toolgroup{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;background:rgba(255,255,255,.045);border:1px solid var(--line);padding:5px;border-radius:12px}.toolgroup.move{grid-template-columns:repeat(4,1fr)}.tool{border:0;background:var(--panel2);color:var(--text);border-radius:8px;min-height:30px;font-size:11px;font-weight:800}.tool.selected{background:rgba(124,108,255,.28);outline:1px solid rgba(124,108,255,.5)}.export-sheet{position:fixed;z-index:200;inset:0;display:none;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.58);padding-top:40px}.export-sheet.open{display:flex}.export-card{width:min(100%,540px);max-height:88dvh;background:#15161d;border-radius:24px 24px 0 0;border:1px solid var(--line);padding:12px 12px calc(14px + env(safe-area-inset-bottom));box-shadow:0 -18px 50px rgba(0,0,0,.42)}.grab{width:42px;height:5px;border-radius:99px;background:rgba(255,255,255,.17);margin:0 auto 12px}.export-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}.export-head strong{font-size:15px}.export-head button{border:0;background:var(--panel2);color:#fff;width:34px;height:34px;border-radius:11px;font-size:20px}.export-card textarea{display:block;width:100%;height:48dvh;resize:none;background:#0e0f14;color:#dfe2ed;border:1px solid var(--line);border-radius:14px;padding:11px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;line-height:1.45}.export-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:8px}.export-actions button{border:1px solid var(--line);background:var(--panel2);color:#fff;border-radius:12px;padding:11px 7px;font-size:10.5px;font-weight:800}.export-actions .primary{background:var(--accent);border-color:transparent}.toast{position:fixed;z-index:300;left:50%;bottom:calc(102px + env(safe-area-inset-bottom));transform:translate(-50%,12px);background:#242630;color:#fff;border:1px solid var(--line);padding:9px 12px;border-radius:12px;font-size:11px;opacity:0;pointer-events:none;transition:.18s}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-height:680px){.phone{height:calc(100dvh - 184px - env(safe-area-inset-top) - env(safe-area-inset-bottom));min-height:360px}.stage{padding-top:calc(101px + env(safe-area-inset-top));padding-bottom:calc(83px + env(safe-area-inset-bottom))}.tools{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="top">
+    <div class="topline">
+      <div class="brand"><strong>Editor visual · DEV</strong><small>Toque em um texto para editar</small></div>
+      <div class="top-actions"><button class="pill" id="resetBtn">Limpar</button><button class="pill primary" id="exportBtn">Gerar alterações</button></div>
+    </div>
+    <div class="navscroll" id="screenNav">
+      <button class="navchip active" data-screen="home">Início</button>
+      <button class="navchip" data-screen="history">Histórico</button>
+      <button class="navchip" data-screen="analysis">Análises</button>
+      <button class="navchip" data-screen="learning">Aprendizado</button>
+      <button class="navchip" data-screen="settings">Ajustes</button>
+      <button class="navchip" data-form="note">Nova anotação</button>
+      <button class="navchip" data-form="medication">Medicamento</button>
+      <button class="navchip" data-form="sleep">Sono</button>
+      <button class="navchip" data-form="purchase">Compra</button>
+    </div>
+  </header>
+
+  <main class="stage">
+    <div class="phone">
+      <div class="hint">Esta prévia não salva registros</div>
+      <iframe id="preview" title="Prévia editável do Registro Mental" src="./?dev-editor-preview=1"></iframe>
+    </div>
+  </main>
+
+  <footer class="bottom">
+    <div class="bottom-inner">
+      <div class="empty-editor" id="emptyEditor"><span>Selecione um texto dentro do app.</span><span class="count" id="changeCount">0 alterações</span></div>
+      <div class="editor" id="editorPanel">
+        <div class="selection-row">
+          <div class="selection-info"><strong id="selectedName">Texto selecionado</strong><small id="selectedSelector"></small></div>
+          <div class="mini-actions"><button class="mini" id="restoreBtn">Restaurar</button><button class="mini danger" id="removeBtn">Apagar texto</button></div>
+        </div>
+        <div class="textline"><textarea id="textInput" spellcheck="false"></textarea><button class="apply" id="applyTextBtn">Aplicar</button></div>
+        <div class="tools">
+          <div class="toolgroup" aria-label="Alinhamento"><button class="tool" data-align="left">Esq.</button><button class="tool" data-align="center">Centro</button><button class="tool" data-align="right">Dir.</button></div>
+          <div class="toolgroup move" aria-label="Mover texto"><button class="tool" data-move="left">←</button><button class="tool" data-move="up">↑</button><button class="tool" data-move="down">↓</button><button class="tool" data-move="right">→</button></div>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<div class="export-sheet" id="exportSheet" aria-hidden="true">
+  <div class="export-card">
+    <div class="grab"></div>
+    <div class="export-head"><strong>Alterações para enviar ao ChatGPT</strong><button id="closeExportBtn" aria-label="Fechar">×</button></div>
+    <textarea id="exportText" readonly></textarea>
+    <div class="export-actions"><button class="primary" id="copyBtn">Copiar código</button><button id="shareBtn">Compartilhar TXT</button><button id="downloadBtn">Salvar TXT</button></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(()=>{
+'use strict';
+const BASE_VERSION='0.4.20';
+const STORAGE_KEY='registro-dev-editor-text-edits-v1';
+const frame=document.getElementById('preview');
+const changes=new Map();
+let selected=null,doc=null,observer=null,applying=false;
+const $=id=>document.getElementById(id);
+
+function notify(text){const t=$('toast');t.textContent=text;t.classList.add('show');clearTimeout(notify._t);notify._t=setTimeout(()=>t.classList.remove('show'),1500)}
+function loadSaved(){try{const raw=JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');for(const c of raw)if(c?.selector)changes.set(c.selector,c)}catch{}updateCount()}
+function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify([...changes.values()]));updateCount()}
+function updateCount(){const n=changes.size;$('changeCount').textContent=`${n} alteraç${n===1?'ão':'ões'}`}
+function currentScreen(el=null){const view=el?.closest?.('.view');if(view?.dataset.view)return view.dataset.view;return doc?.querySelector('.view.active')?.dataset.view||'unknown'}
+function escCss(v){return CSS.escape(String(v))}
+function stableAttr(el){for(const key of ['data-view','data-tab','data-type','data-go','data-filter','data-icon','data-menu'])if(el.hasAttribute?.(key))return `[${key}="${escCss(el.getAttribute(key))}"]`;return''}
+function segment(el){if(el.id)return`#${escCss(el.id)}`;const attr=stableAttr(el);if(attr)return`${el.tagName.toLowerCase()}${attr}`;const tag=el.tagName.toLowerCase();const cls=[...el.classList].filter(c=>!['selected','active','hidden','open'].includes(c)).slice(0,2);let s=tag+cls.map(c=>`.${escCss(c)}`).join('');const parent=el.parentElement;if(parent){const same=[...parent.children].filter(x=>x.tagName===el.tagName);if(same.length>1)s+=`:nth-of-type(${same.indexOf(el)+1})`}return s}
+function selectorFor(el){if(el.id)return`#${escCss(el.id)}`;const parts=[];let cur=el;while(cur&&cur!==doc.body&&parts.length<7){if(cur.classList?.contains('view')&&cur.dataset.view){parts.unshift(`.view[data-view="${escCss(cur.dataset.view)}"]`);return parts.join(' > ')}if(cur.id){parts.unshift(`#${escCss(cur.id)}`);return parts.join(' > ')}parts.unshift(segment(cur));cur=cur.parentElement}return parts.join(' > ')}
+function isTextTarget(el){if(!el||!el.tagName)return false;if(el.closest('[data-audio],svg,input,textarea,select'))return false;const tag=el.tagName;const allowed=['H1','H2','H3','H4','P','SMALL','STRONG','LABEL','SPAN','BUTTON','DIV'];if(!allowed.includes(tag))return false;const text=(el.textContent||'').trim();if(!text)return false;if(el.childElementCount===0)return true;if(['H1','H2','H3','H4','P','SMALL','STRONG','LABEL'].includes(tag)&&el.querySelectorAll('svg,button,input,textarea,select').length===0)return true;return false}
+function targetFrom(start){let el=start;for(let i=0;i<6&&el&&el!==doc.body;i++,el=el.parentElement)if(isTextTarget(el))return el;return null}
+function labelFor(el){const t=(el.textContent||'').trim().replace(/\s+/g,' ');return t.length>42?t.slice(0,39)+'…':t||el.tagName.toLowerCase()}
+function originalSnapshot(el){if(el.dataset.devOriginalText===undefined)el.dataset.devOriginalText=el.textContent||'';if(el.dataset.devOriginalAlign===undefined)el.dataset.devOriginalAlign=el.style.textAlign||'';if(el.dataset.devOriginalLeft===undefined)el.dataset.devOriginalLeft=el.style.left||'';if(el.dataset.devOriginalTop===undefined)el.dataset.devOriginalTop=el.style.top||'';return{originalText:el.dataset.devOriginalText,originalAlign:el.dataset.devOriginalAlign,originalLeft:el.dataset.devOriginalLeft,originalTop:el.dataset.devOriginalTop}}
+function clearHighlight(){try{doc?.querySelectorAll('[data-dev-selected="1"]').forEach(el=>{el.removeAttribute('data-dev-selected');el.style.outline=el.dataset.devOldOutline||'';el.style.outlineOffset=el.dataset.devOldOutlineOffset||''})}catch{}}
+function highlight(el){clearHighlight();el.dataset.devOldOutline=el.style.outline||'';el.dataset.devOldOutlineOffset=el.style.outlineOffset||'';el.dataset.devSelected='1';el.style.outline='2px solid #7c6cff';el.style.outlineOffset='3px'}
+function selectElement(el){if(!el)return;selected=el;const snap=originalSnapshot(el),selector=selectorFor(el);highlight(el);$('emptyEditor').style.display='none';$('editorPanel').classList.add('open');$('selectedName').textContent=labelFor(el);$('selectedSelector').textContent=`${currentScreen(el)} · ${selector}`;$('textInput').value=el.dataset.devRemoved==='1'?'':el.textContent||'';const align=el.dataset.devAlign||getComputedStyle(el).textAlign;document.querySelectorAll('[data-align]').forEach(b=>b.classList.toggle('selected',b.dataset.align===align));if(!changes.has(selector)){el.dataset.devSelector=selector;el.dataset.devScreen=currentScreen(el);el.dataset.devOriginalText=snap.originalText}}
+function ensureChange(el){const selector=el.dataset.devSelector||selectorFor(el);const snap=originalSnapshot(el);let c=changes.get(selector);if(!c){c={selector,screen:currentScreen(el),element:el.tagName.toLowerCase(),originalText:snap.originalText};changes.set(selector,c)}el.dataset.devSelector=selector;return c}
+function cleanChange(c){const out={selector:c.selector,screen:c.screen,element:c.element,originalText:c.originalText};if(c.removeText)out.removeText=true;else if(c.text!==undefined&&c.text!==c.originalText)out.text=c.text;if(c.align)out.align=c.align;if(c.offsetX||c.offsetY)out.offset={x:c.offsetX||0,y:c.offsetY||0};return out}
+function maybeDrop(c){const cleaned=cleanChange(c);const modified=cleaned.removeText||cleaned.text!==undefined||cleaned.align||cleaned.offset;if(!modified)changes.delete(c.selector)}
+function applyChangeToElement(el,c){if(!el||!c)return;applying=true;const snap=originalSnapshot(el);if(c.removeText){el.style.visibility='hidden';el.dataset.devRemoved='1';el.textContent=snap.originalText}else{el.style.visibility='';delete el.dataset.devRemoved;if(c.text!==undefined)el.textContent=c.text;else el.textContent=snap.originalText}if(c.align){el.style.textAlign=c.align;el.dataset.devAlign=c.align}else{el.style.textAlign=snap.originalAlign;delete el.dataset.devAlign}const x=c.offsetX||0,y=c.offsetY||0;if(x||y){el.style.position='relative';el.style.left=`${x}px`;el.style.top=`${y}px`}else{el.style.left=snap.originalLeft;el.style.top=snap.originalTop}applying=false}
+function applyAll(){if(!doc||applying)return;for(const c of changes.values()){let el=null;try{el=doc.querySelector(c.selector)}catch{}if(el)applyChangeToElement(el,c)}}
+function applyText(){if(!selected)return;const c=ensureChange(selected);c.text=$('textInput').value;c.removeText=false;applyChangeToElement(selected,c);maybeDrop(c);save();selectElement(selected)}
+function align(value){if(!selected)return;const c=ensureChange(selected);c.align=value;applyChangeToElement(selected,c);save();selectElement(selected)}
+function move(dir){if(!selected)return;const c=ensureChange(selected);const step=4;c.offsetX=c.offsetX||0;c.offsetY=c.offsetY||0;if(dir==='left')c.offsetX-=step;if(dir==='right')c.offsetX+=step;if(dir==='up')c.offsetY-=step;if(dir==='down')c.offsetY+=step;applyChangeToElement(selected,c);maybeDrop(c);save();selectElement(selected)}
+function removeText(){if(!selected)return;const c=ensureChange(selected);c.removeText=true;delete c.text;applyChangeToElement(selected,c);save();$('textInput').value='';notify('Texto marcado para remoção')}
+function restoreSelected(){if(!selected)return;const selector=selected.dataset.devSelector||selectorFor(selected);const snap=originalSnapshot(selected);changes.delete(selector);applying=true;selected.style.visibility='';selected.textContent=snap.originalText;selected.style.textAlign=snap.originalAlign;selected.style.left=snap.originalLeft;selected.style.top=snap.originalTop;selected.style.position='';delete selected.dataset.devRemoved;delete selected.dataset.devAlign;applying=false;save();selectElement(selected);notify('Alteração restaurada')}
+function resetAll(){if(!changes.size)return;const ok=confirm('Limpar todas as alterações feitas nesta versão de desenvolvedor?');if(!ok)return;changes.clear();localStorage.removeItem(STORAGE_KEY);try{frame.contentWindow.location.reload()}catch{}selected=null;$('editorPanel').classList.remove('open');$('emptyEditor').style.display='flex';updateCount()}
+function changeScreen(name){if(!doc)return;clearHighlight();selected=null;$('editorPanel').classList.remove('open');$('emptyEditor').style.display='flex';try{const btn=doc.querySelector(`.tab-item[data-tab="${name}"]`);if(btn)btn.click();else if(typeof frame.contentWindow.switchTab==='function')frame.contentWindow.switchTab(name)}catch{}document.querySelectorAll('[data-screen]').forEach(b=>b.classList.toggle('active',b.dataset.screen===name));setTimeout(applyAll,120)}
+function openForm(type){if(!doc)return;try{const btn=doc.querySelector(`[data-type="${type}"]`);if(btn)btn.click()}catch{}setTimeout(applyAll,140)}
+function bindFrame(){doc=frame.contentDocument;if(!doc)return;try{doc.documentElement.dataset.devEditorPreview='1'}catch{}const intercept=e=>{if(!e.isTrusted)return;const el=targetFrom(e.target);if(!el)return;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();selectElement(el)};doc.addEventListener('click',intercept,true);doc.addEventListener('submit',e=>{if(e.isTrusted){e.preventDefault();e.stopImmediatePropagation()}},true);const st=doc.createElement('style');st.id='dev-editor-preview-style';st.textContent=`html[data-dev-editor-preview="1"] button,html[data-dev-editor-preview="1"] a{-webkit-user-select:none;user-select:none}html[data-dev-editor-preview="1"] [data-dev-selected="1"]{cursor:text!important}html[data-dev-editor-preview="1"] body{padding-bottom:8px}`;doc.head.appendChild(st);if(observer)observer.disconnect();observer=new MutationObserver(()=>{clearTimeout(bindFrame._m);bindFrame._m=setTimeout(applyAll,45)});observer.observe(doc.body,{subtree:true,childList:true});setTimeout(applyAll,150);setTimeout(applyAll,900);setTimeout(applyAll,1800)}
+function patchObject(){const list=[...changes.values()].map(cleanChange).filter(c=>c.removeText||c.text!==undefined||c.align||c.offset);return{format:'registro-mental-dev-edits-v1',app:'Registro Mental PWA',baseVersion:BASE_VERSION,generatedAt:new Date().toISOString(),instructions:'Aplicar estas alterações ao app original. originalText serve como conferência; selector identifica o elemento na versão de referência.',changes:list}}
+function exportPayload(){const patch=patchObject();return`REGISTRO MENTAL — ALTERAÇÕES DO EDITOR DE DESENVOLVEDOR\nBase do editor: ${BASE_VERSION}\nQuantidade: ${patch.changes.length}\n\nEnvie este arquivo/texto ao ChatGPT e peça para aplicar as alterações ao app original.\n\n--- PATCH JSON ---\n${JSON.stringify(patch,null,2)}\n`}
+function openExport(){$('exportText').value=exportPayload();$('exportSheet').classList.add('open');$('exportSheet').setAttribute('aria-hidden','false')}
+function closeExport(){$('exportSheet').classList.remove('open');$('exportSheet').setAttribute('aria-hidden','true')}
+async function copyExport(){try{await navigator.clipboard.writeText($('exportText').value);notify('Código copiado')}catch{$('exportText').select();document.execCommand('copy');notify('Código copiado')}}
+function makeFile(){return new File([$('exportText').value],`registro-mental-alteracoes-${new Date().toISOString().slice(0,10)}.txt`,{type:'text/plain'})}
+async function shareExport(){const file=makeFile();try{if(navigator.canShare?.({files:[file]})){await navigator.share({files:[file],title:'Alterações do Registro Mental'});return}await navigator.share({title:'Alterações do Registro Mental',text:$('exportText').value})}catch(e){if(e?.name!=='AbortError')downloadExport()}}
+function downloadExport(){const file=makeFile(),url=URL.createObjectURL(file),a=document.createElement('a');a.href=url;a.download=file.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500)}
+
+loadSaved();
+frame.addEventListener('load',()=>setTimeout(bindFrame,40));
+$('applyTextBtn').onclick=applyText;$('removeBtn').onclick=removeText;$('restoreBtn').onclick=restoreSelected;$('resetBtn').onclick=resetAll;$('exportBtn').onclick=openExport;$('closeExportBtn').onclick=closeExport;$('copyBtn').onclick=copyExport;$('shareBtn').onclick=shareExport;$('downloadBtn').onclick=downloadExport;
+document.querySelectorAll('[data-align]').forEach(b=>b.onclick=()=>align(b.dataset.align));document.querySelectorAll('[data-move]').forEach(b=>b.onclick=()=>move(b.dataset.move));document.querySelectorAll('[data-screen]').forEach(b=>b.onclick=()=>changeScreen(b.dataset.screen));document.querySelectorAll('[data-form]').forEach(b=>b.onclick=()=>openForm(b.dataset.form));$('exportSheet').addEventListener('click',e=>{if(e.target===$('exportSheet'))closeExport()});
+})();
+</script>
+</body>
+</html>
