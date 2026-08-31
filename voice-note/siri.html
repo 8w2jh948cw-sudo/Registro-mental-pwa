@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#f5f5f7">
+<title>Anotar por Voz — Siri</title>
+<style>
+:root{color-scheme:light dark;--bg:#f5f5f7;--card:#fff;--text:#111114;--muted:#6e6e73;--line:rgba(60,60,67,.14);--green:#34c759;--red:#ff3b30}@media(prefers-color-scheme:dark){:root{--bg:#000;--card:#1c1c1e;--text:#f5f5f7;--muted:#98989d;--line:rgba(235,235,245,.14)}}*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif}body{min-height:100dvh;display:grid;place-items:center;padding:24px}.card{width:min(100%,440px);background:var(--card);border:1px solid var(--line);border-radius:28px;padding:28px 22px;text-align:center}.orb{width:128px;height:128px;margin:10px auto 26px;border-radius:50%;display:grid;place-items:center;background:var(--green);color:#fff;font-size:52px}.orb.live{background:var(--red)}h1{font-size:25px;margin:0 0 8px}p{margin:0;color:var(--muted);line-height:1.45}.meter{height:8px;background:var(--line);border-radius:999px;overflow:hidden;margin:24px 0 12px}.meter>div{height:100%;width:0;background:var(--green)}.timer{font-variant-numeric:tabular-nums;font-size:14px;color:var(--muted);min-height:22px}.btn{margin-top:22px;width:100%;border:0;border-radius:16px;padding:14px 16px;font:inherit;font-weight:650;background:var(--text);color:var(--bg)}.hidden{display:none}.error{color:var(--red)}
+</style>
+</head>
+<body>
+<section class="card">
+<div id="orb" class="orb">🎙️</div>
+<h1 id="status">Preparando…</h1>
+<p id="detail">A gravação deve começar automaticamente.</p>
+<div class="meter"><div id="meter"></div></div>
+<div id="timer" class="timer"></div>
+<button id="start" class="btn hidden">Começar gravação</button>
+<button id="setup" class="btn hidden">Abrir configuração</button>
+</section>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id),E={orb:$('orb'),status:$('status'),detail:$('detail'),meter:$('meter'),timer:$('timer'),start:$('start'),setup:$('setup')};
+const KEY='voiceNote.apiKey',SIL='voiceNote.silenceSeconds',SENS='voiceNote.sensitivity',MODEL='voiceNote.model';
+let stream,rec,ctx,an,raf,chunks=[],started=0,last=0,lastVoice=0,voiceAccum=0,voiceSeen=false,noise=.008,stopping=false;
+const key=()=>localStorage.getItem(KEY)||'';
+const cfg=()=>{const m=localStorage.getItem(SENS)||'normal';return m==='high'?{f:1.5,o:.003,min:.010}:m==='low'?{f:2.25,o:.006,min:.016}:{f:1.8,o:.004,min:.012}};
+const mime=()=>['audio/mp4;codecs=mp4a.40.2','audio/mp4','audio/webm;codecs=opus','audio/webm'].find(t=>window.MediaRecorder&&MediaRecorder.isTypeSupported(t))||'';
+function fail(msg){cleanup();E.status.textContent='Preciso de uma ação sua';E.detail.textContent=msg;E.detail.classList.add('error');E.start.classList.remove('hidden')}
+function cleanup(){cancelAnimationFrame(raf);if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}if(ctx){try{ctx.close()}catch(_){ }ctx=null}an=null}
+async function begin(){E.start.classList.add('hidden');E.setup.classList.add('hidden');E.detail.classList.remove('error');if(!key()){E.status.textContent='Configuração necessária';E.detail.textContent='Abra a página principal, salve sua chave e ative “Lembrar chave neste dispositivo”.';E.setup.classList.remove('hidden');return}if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){fail('Abra pelo Safari no iPhone.');return}try{cleanup();chunks=[];stopping=false;stream=await navigator.mediaDevices.getUserMedia({audio:{channelCount:1,echoCancellation:true,noiseSuppression:true,autoGainControl:true}});ctx=new(window.AudioContext||window.webkitAudioContext)();await ctx.resume();const src=ctx.createMediaStreamSource(stream);an=ctx.createAnalyser();an.fftSize=2048;an.smoothingTimeConstant=.15;src.connect(an);const m=mime();rec=m?new MediaRecorder(stream,{mimeType:m,audioBitsPerSecond:64000}):new MediaRecorder(stream,{audioBitsPerSecond:64000});rec.ondataavailable=e=>{if(e.data?.size)chunks.push(e.data)};rec.onstop=transcribe;rec.start(250);started=performance.now();last=started;lastVoice=0;voiceAccum=0;voiceSeen=false;noise=.008;E.orb.classList.add('live');E.status.textContent='Ouvindo…';E.detail.textContent='Fale normalmente. A pausa longa encerra sozinha.';monitor()}catch(e){fail(String(e?.name).includes('NotAllowed')?'Permita o microfone para esta página. Depois toque em “Começar gravação”.':'Não consegui iniciar o microfone: '+(e?.message||e))}}
+function monitor(){if(!an||!rec||rec.state!=='recording')return;const d=new Float32Array(an.fftSize);an.getFloatTimeDomainData(d);let sum=0;for(const x of d)sum+=x*x;const rms=Math.sqrt(sum/d.length),now=performance.now(),dt=Math.max(0,now-last);last=now;const c=cfg(),thr=Math.max(c.min,Math.min(.06,noise*c.f+c.o)),voice=rms>thr;if(!voiceSeen){if(voice){voiceAccum+=dt;if(voiceAccum>=120){voiceSeen=true;lastVoice=now;E.detail.textContent='Voz detectada.'}}else{voiceAccum=0;noise=Math.min(.03,noise*.94+rms*.06)}}else{if(voice)lastVoice=now;else noise=Math.min(.03,noise*.995+rms*.005);const s=Number(localStorage.getItem(SIL)||4),quiet=(now-lastVoice)/1000,left=Math.max(0,s-quiet);if(quiet>.35)E.detail.textContent='Pausa detectada · encerrando em '+left.toFixed(1).replace('.',',')+' s';else E.detail.textContent='Voz detectada.';if(quiet>=s){stop();return}}E.meter.style.width=Math.max(0,Math.min(100,(rms/Math.max(thr*2.2,.04))*100))+'%';E.timer.textContent='Gravando · '+((now-started)/1000).toFixed(1).replace('.',',')+' s';if(now-started>300000){stop();return}raf=requestAnimationFrame(monitor)}
+function stop(){if(stopping||!rec||rec.state==='inactive')return;stopping=true;cancelAnimationFrame(raf);E.status.textContent='Transcrevendo…';E.detail.textContent='Enviando o áudio para a OpenAI.';try{rec.stop()}catch(_){}}
+async function transcribe(){const type=rec?.mimeType||mime()||'audio/mp4',blob=new Blob(chunks,{type});cleanup();try{const ext=type.includes('webm')?'webm':'m4a',form=new FormData();form.append('file',blob,'anotacao.'+ext);form.append('model',localStorage.getItem(MODEL)||'gpt-transcribe');form.append('language','pt');const r=await fetch('https://api.openai.com/v1/audio/transcriptions',{method:'POST',headers:{Authorization:'Bearer '+key()},body:form});let j={};try{j=await r.json()}catch(_){ }if(!r.ok)throw new Error(j?.error?.message||'Erro HTTP '+r.status);const text=(j?.text||'').trim();if(!text)throw new Error('A OpenAI não retornou texto.');E.status.textContent='Salvando…';E.detail.textContent='Abrindo o atalho para adicionar à nota.';location.href='shortcuts://run-shortcut?name='+encodeURIComponent('Salvar Anotação por Voz')+'&input=text&text='+encodeURIComponent(text)}catch(e){fail('Falha na transcrição: '+(e?.message||e))}}
+E.start.onclick=begin;E.setup.onclick=()=>location.href='./';
+setTimeout(begin,350);
+})();
+</script>
+</body>
+</html>
