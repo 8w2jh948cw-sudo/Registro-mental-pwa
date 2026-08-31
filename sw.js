@@ -1,4 +1,4 @@
-const CACHE='registro-v28-0.4.20';
+const CACHE='registro-v29-0.4.21';
 const FILES=[
   './',
   './index.html',
