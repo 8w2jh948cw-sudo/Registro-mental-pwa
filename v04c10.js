@@ -21,6 +21,16 @@ document.addEventListener('click',e=>{if(e.target.closest('[data-menu],button,au
 [data-icon="bag"]{color:var(--buy)!important}
 `;document.head.appendChild(st)})();
 
+/* Proteção de inicialização: antes mesmo dos motores extras chegarem, só a aba visível é renderizada. */
+(function installEarlyPerformanceGuard(){
+  if(typeof renderAll==='function')renderAll=async function(){
+    if(!db)return;const events=(await allEvents()).sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));const view=document.querySelector('.view.active')?.dataset.view||'home';
+    if(view==='history')await renderHistory(events);else if(view==='analysis')await renderAnalysis(events);else if(view==='home')await renderHome(events);
+    renderBackupState();renderHealthState();
+  };
+  if(typeof switchTab==='function'&&!switchTab.__rmPerformance){const previous=switchTab;const wrapped=function(name){previous(name);requestAnimationFrame(()=>{if(typeof renderAll==='function')renderAll().catch?.(console.error)})};wrapped.__rmPerformance=true;wrapped.__rmPrevious=previous;switchTab=wrapped}
+})();
+
 /* Carregamento otimizado: runtime de desempenho primeiro; motores independentes em paralelo; dependências em grupos curtos. */
 (function loadOptimizedEngines(){
   const load=(src,key)=>new Promise((resolve,reject)=>{if(document.querySelector(`script[data-engine-key="${key}"]`))return resolve();const s=document.createElement('script');s.dataset.engineKey=key;s.src=src;s.onload=()=>{try{if(typeof rmInstallPerformanceRuntime==='function')rmInstallPerformanceRuntime()}catch{}resolve()};s.onerror=()=>{console.error(`Falha ao carregar ${key}`);reject(new Error(key))};document.head.appendChild(s)});
