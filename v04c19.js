@@ -1,5 +1,5 @@
 /* Runtime de desempenho: renderiza apenas a aba visível, memoriza telas prontas e evita reconstruções desnecessárias. */
-const RM_PERFORMANCE_VERSION='1.1.0';
+const RM_PERFORMANCE_VERSION='1.1.1';
 const RM_APP_RELEASE='0.4.18';
 let rmRenderQueued=false,rmQueuedView=null,rmRenderSerial=0,rmDataRevision=0,rmHistoryLimit=80,rmHistoryFilterSeen=null,rmLastModuleSignature='';
 const rmViewCache=new Map();
@@ -74,7 +74,7 @@ function rmWrapSettingsMutation(){
 function rmInstallPerformanceRuntime(){
   if(typeof renderAll==='function')renderAll=async function(){return rmRenderActive(null,{force:true})};
   if(typeof switchTab==='function'&&!switchTab.__rmPerformance){
-    const previous=switchTab;
+    const previous=switchTab.__rmEarlyPerformance&&switchTab.__rmPrevious?switchTab.__rmPrevious:switchTab;
     const wrapped=function(name){previous(name);rmScheduleRender(name)};
     wrapped.__rmPerformance=true;wrapped.__rmPrevious=previous;switchTab=wrapped;
   }
