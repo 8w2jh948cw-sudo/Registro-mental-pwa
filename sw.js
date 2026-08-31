@@ -1,4 +1,4 @@
-const CACHE='registro-v33-0.4.25';
+const CACHE='registro-v34-0.4.26';
 const FILES=[
   './',
   './index.html',
@@ -30,9 +30,11 @@ const FILES=[
   './v04c23.js?v=0.4.25',
   './v04c24.js?v=0.4.25',
   './v04c25.js?v=0.4.25',
+  './v04c26.js?v=0.4.26',
   './v04demo.js?v=0.4.25',
   './v04tabbar.js?v=0.4.2',
   './v04navicons.js?v=0.4.10',
+  './v04navicons.js?v=0.4.26',
   './manifest.webmanifest?v=0.4.0',
   './tabbar-lab.html',
   './tabbar-editor.html',
@@ -66,7 +68,12 @@ self.addEventListener('fetch',event=>{
   event.respondWith((async()=>{
     const cache=await caches.open(CACHE);
     let cached=await cache.match(request);
-    if(!cached&&request.mode==='navigate')cached=await cache.match('./index.html');
+    if(!cached&&request.mode==='navigate'){
+      const path=url.pathname.split('/').pop();
+      if(path==='tabbar-lab.html')cached=await cache.match('./tabbar-lab.html');
+      else if(path==='tabbar-editor.html')cached=await cache.match('./tabbar-editor.html');
+      else cached=await cache.match('./index.html');
+    }
     const refresh=fetch(request,{cache:'no-cache'}).then(async response=>{if(response&&response.ok)await cache.put(request,response.clone());return response}).catch(()=>null);
     if(cached){event.waitUntil(refresh);return cached}
     const network=await refresh;
