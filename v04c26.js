@@ -20,9 +20,23 @@ window.addEventListener('pageshow',()=>{
 });
 
 function rmV26Finalize(){
+  try{if(typeof RM_V28_RELEASE!=='undefined'||typeof RM_V27_RELEASE!=='undefined')return}catch{}
   const top=document.getElementById('topVersion'),about=document.getElementById('versionLabel');
   if(top)top.textContent=`v${RM_V26_RELEASE}`;
   if(about)about.textContent=RM_V26_RELEASE;
 }
 rmV26Finalize();
 setTimeout(rmV26Finalize,1200);
+
+/* A revisão seguinte precisa entrar depois da 0.4.27, pois redefine cartões e visualizadores. */
+(function rmV26LoadV28(){
+  let tries=0;
+  const wait=()=>{
+    tries++;
+    let ready=false;try{ready=typeof RM_V27_RELEASE!=='undefined'}catch{}
+    if(!ready&&tries<80)return setTimeout(wait,50);
+    if(document.querySelector('script[data-engine-key="v28-refinement"]'))return;
+    const s=document.createElement('script');s.dataset.engineKey='v28-refinement';s.src='./v04c28.js?v=0.4.28';s.onload=()=>{try{rmV28Finalize?.()}catch{};try{rmInstallPerformanceRuntime?.()}catch{}};s.onerror=()=>console.error('Falha ao carregar revisão 0.4.28');document.head.appendChild(s);
+  };
+  wait();
+})();
