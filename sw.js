@@ -1,10 +1,11 @@
-const CACHE='registro-v42-0.4.34';
+const CACHE='registro-v45-0.4.35';
 const FILES=[
   './',
   './index.html',
   './styles.css?v=0.4.0',
   './enhancements.css?v=0.4.0',
   './v04.css?v=0.4.0',
+  './release-guard.js?v=0.4.35',
   './v04c1.js?v=0.4.0',
   './v04c2.js?v=0.4.0',
   './v04c3.js?v=0.4.0',
@@ -40,6 +41,7 @@ const FILES=[
   './v04c32.js?v=0.4.32',
   './v04c33.js?v=0.4.33',
   './v04c34.js?v=0.4.34',
+  './v04c35.js?v=0.4.35',
   './v04demo.js?v=0.4.25',
   './v04tabbar.js?v=0.4.2',
   './v04navicons.js?v=0.4.10',
@@ -81,18 +83,20 @@ self.addEventListener('fetch',event=>{
 
   event.respondWith((async()=>{
     const cache=await caches.open(CACHE);
-    let cached=await cache.match(request);
-    if(!cached&&request.mode==='navigate'){
-      const path=url.pathname.split('/').pop();
-      if(path==='tabbar-lab.html')cached=await cache.match('./tabbar-lab.html');
-      else if(path==='tabbar-editor.html')cached=await cache.match('./tabbar-editor.html');
-      else cached=await cache.match('./index.html');
+    try{
+      const response=await fetch(request,{cache:'no-cache'});
+      if(response&&response.ok)await cache.put(request,response.clone());
+      return response;
+    }catch{
+      let cached=await cache.match(request);
+      if(!cached&&request.mode==='navigate'){
+        const path=url.pathname.split('/').pop();
+        if(path==='tabbar-lab.html')cached=await cache.match('./tabbar-lab.html');
+        else if(path==='tabbar-editor.html')cached=await cache.match('./tabbar-editor.html');
+        else cached=await cache.match('./index.html');
+      }
+      return cached||new Response('Offline',{status:503,statusText:'Offline'});
     }
-    const refresh=fetch(request,{cache:'no-cache'}).then(async response=>{if(response&&response.ok)await cache.put(request,response.clone());return response}).catch(()=>null);
-    if(cached){event.waitUntil(refresh);return cached}
-    const network=await refresh;
-    if(network)return network;
-    return (await cache.match('./index.html'))||new Response('Offline',{status:503,statusText:'Offline'});
   })());
 });
 
