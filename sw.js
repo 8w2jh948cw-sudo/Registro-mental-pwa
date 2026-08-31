@@ -1,4 +1,4 @@
-const CACHE='registro-v40-0.4.32';
+const CACHE='registro-v41-0.4.33';
 const FILES=[
   './',
   './index.html',
@@ -38,6 +38,7 @@ const FILES=[
   './v04c30.js?v=0.4.30',
   './v04c31.js?v=0.4.31',
   './v04c32.js?v=0.4.32',
+  './v04c33.js?v=0.4.33',
   './v04demo.js?v=0.4.25',
   './v04tabbar.js?v=0.4.2',
   './v04navicons.js?v=0.4.10',
@@ -65,9 +66,14 @@ self.addEventListener('fetch',event=>{
   const isStatic=['script','style','font','image'].includes(request.destination)||/\.(?:js|css|webmanifest)$/i.test(url.pathname);
   if(isStatic){
     event.respondWith((async()=>{
-      const cache=await caches.open(CACHE),cached=await cache.match(request);
-      if(cached)return cached;
-      try{const response=await fetch(request);if(response.ok)await cache.put(request,response.clone());return response}catch{return new Response('Offline',{status:503,statusText:'Offline'})}
+      const cache=await caches.open(CACHE);
+      try{
+        const response=await fetch(request,{cache:'no-cache'});
+        if(response&&response.ok)await cache.put(request,response.clone());
+        return response;
+      }catch{
+        return (await cache.match(request))||new Response('Offline',{status:503,statusText:'Offline'});
+      }
     })());
     return;
   }
@@ -87,4 +93,9 @@ self.addEventListener('fetch',event=>{
     if(network)return network;
     return (await cache.match('./index.html'))||new Response('Offline',{status:503,statusText:'Offline'});
   })());
+});
+
+
+self.addEventListener('message',event=>{
+  if(event.data?.type==='SKIP_WAITING')self.skipWaiting();
 });
