@@ -47,6 +47,8 @@ function rmCenterSuitableSettings(){
   });
   const themeLabel=document.getElementById('themeControl')?.closest('.setting-block')?.querySelector('.setting-label');
   themeLabel?.querySelector('small')?.remove();
+  const accentLabel=document.getElementById('accentControl')?.closest('.setting-block')?.querySelector('.setting-label');
+  accentLabel?.querySelector('small')?.remove();
 }
 
 function rmDetachBlock(id){
