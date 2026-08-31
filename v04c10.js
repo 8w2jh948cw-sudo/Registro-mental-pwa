@@ -39,28 +39,29 @@ document.addEventListener('click',e=>{if(e.target.closest('[data-menu],button,au
   const load=(src,key)=>new Promise((resolve,reject)=>{if(document.querySelector(`script[data-engine-key="${key}"]`))return resolve();const s=document.createElement('script');s.dataset.engineKey=key;s.src=src;s.onload=()=>{try{if(typeof rmInstallPerformanceRuntime==='function')rmInstallPerformanceRuntime()}catch{}resolve()};s.onerror=()=>{console.error(`Falha ao carregar ${key}`);reject(new Error(key))};document.head.appendChild(s)});
   const idle=()=>new Promise(resolve=>{if('requestIdleCallback'in window)requestIdleCallback(()=>resolve(),{timeout:1200});else setTimeout(resolve,350)});
   const start=async()=>{
-    try{await load('./v04c19.js?v=0.4.23','performance')}catch{}
-    const emotion=load('./v04c12.js?v=0.4.23','emotion');
-    const palette=load('./v04c15.js?v=0.4.23','semantic-palette');
-    const icons=load('./v04c16.js?v=0.4.23','record-icons');
+    try{await load('./v04c19.js?v=0.4.24','performance')}catch{}
+    const emotion=load('./v04c12.js?v=0.4.24','emotion');
+    const palette=load('./v04c15.js?v=0.4.24','semantic-palette');
+    const icons=load('./v04c16.js?v=0.4.24','record-icons');
     await Promise.allSettled([emotion,palette,icons]);
     try{if(typeof rmInstallPerformanceRuntime==='function')rmInstallPerformanceRuntime()}catch{}
-    await Promise.resolve(emotion).then(()=>load('./v04c18.js?v=0.4.23','visual')).catch(()=>{});
+    await Promise.resolve(emotion).then(()=>load('./v04c18.js?v=0.4.24','visual')).catch(()=>{});
     try{if(typeof rmInstallPerformanceRuntime==='function')rmInstallPerformanceRuntime()}catch{}
-    try{await load('./v04c20.js?v=0.4.23','visual-mode')}catch{}
-    try{await load('./v04c21.js?v=0.4.23','settings-layout')}catch{}
+    try{await load('./v04c20.js?v=0.4.24','visual-mode')}catch{}
+    try{await load('./v04c21.js?v=0.4.24','settings-layout')}catch{}
     try{if(typeof rmInstallPerformanceRuntime==='function')rmInstallPerformanceRuntime()}catch{}
 
     await idle();
-    const learning=load('./v04c11.js?v=0.4.23','learning');
+    const learning=load('./v04c11.js?v=0.4.24','learning');
     await Promise.allSettled([learning]);
     try{if(typeof rmInstallPerformanceRuntime==='function')rmInstallPerformanceRuntime()}catch{}
-    const continuity=Promise.resolve(learning).then(()=>load('./v04c13.js?v=0.4.23','continuity'));
+    const continuity=Promise.resolve(learning).then(()=>load('./v04c13.js?v=0.4.24','continuity'));
     await Promise.allSettled([continuity]);
-    try{await load('./v04c22.js?v=0.4.23','health-hub')}catch{}
+    try{await load('./v04c22.js?v=0.4.24','health-hub')}catch{}
     try{if(typeof rmInstallPerformanceRuntime==='function')rmInstallPerformanceRuntime()}catch{}
-    await Promise.resolve(continuity).then(()=>load('./v04c14.js?v=0.4.23','interview')).catch(()=>{});
-    try{await load('./v04c23.js?v=0.4.23','analysis-review')}catch{}
+    await Promise.resolve(continuity).then(()=>load('./v04c14.js?v=0.4.24','interview')).catch(()=>{});
+    try{await load('./v04c23.js?v=0.4.24','analysis-review')}catch{}
+    try{await load('./v04c24.js?v=0.4.24','v24-fixes')}catch{}
     try{if(typeof rmInstallPerformanceRuntime==='function')rmInstallPerformanceRuntime()}catch{}
   };
   start();
