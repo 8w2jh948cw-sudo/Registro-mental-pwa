@@ -1,5 +1,5 @@
 /* Runtime de desempenho: renderiza apenas a aba visível e evita reconstruções desnecessárias. */
-const RM_PERFORMANCE_VERSION='1.0.0';
+const RM_PERFORMANCE_VERSION='1.0.1';
 const RM_APP_RELEASE='0.4.18';
 let rmRenderQueued=false,rmQueuedView=null,rmRenderSerial=0;
 
@@ -50,13 +50,14 @@ function rmInstallPerformanceRuntime(){
     const wrapped=function(name){previous(name);rmScheduleRender(name)};
     wrapped.__rmPerformance=true;wrapped.__rmPrevious=previous;switchTab=wrapped;
   }
+  try{if(typeof rmObserver!=='undefined')rmObserver.disconnect()}catch{}
   const top=document.getElementById('topVersion'),about=document.getElementById('versionLabel');
   if(top)top.textContent=`v${RM_APP_RELEASE}`;if(about)about.textContent=RM_APP_RELEASE;
   document.documentElement.dataset.rmPerformance='1';
 }
 rmInstallPerformanceRuntime();
 
-/* Histórico muito longo deixa de custar pintura fora da área visível. */
+/* Elementos fora da tela deixam de consumir pintura; blur é mantido com custo menor no iPhone. */
 (function rmPerformanceStyles(){if(document.getElementById('rm-performance-style'))return;const st=document.createElement('style');st.id='rm-performance-style';st.textContent=`
 .view:not(.active){display:none!important}
 [data-view="history"] .timeline-item,[data-view="learning"] .learning-question,[data-view="analysis"] .analysis-card{content-visibility:auto;contain-intrinsic-size:110px}
